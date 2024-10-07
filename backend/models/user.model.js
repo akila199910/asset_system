@@ -7,6 +7,9 @@ const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: true,
+        minLength: 3,
+        maxLength: 30,
+        pattern: "^[a-zA-Z]+$",
     },
     lastName: {
         type: String,

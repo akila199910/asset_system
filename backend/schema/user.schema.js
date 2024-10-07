@@ -38,4 +38,6 @@ const userSchema = {
       required: false,
     },
   },
+  required: ["firstName", "lastName", "contact", "email", "role"],
 };
+export default userSchema;
