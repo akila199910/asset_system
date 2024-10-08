@@ -35,10 +35,6 @@ const userModel = new mongoose.Schema({
     enum: ["super_admin", "admin", "business_user", "user", "guest"],
     default: "guest",
   },
-  profilePic: {
-    type: String,
-    required: false,
-  },
 });
 
 export default mongoose.model("Users", userModel);
