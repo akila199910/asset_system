@@ -1,39 +1,44 @@
 import mongoose from "mongoose";
-import Ajv from "ajv";
 
-const ajv = new Ajv();
+const userModel = new mongoose.Schema({
+  firstName: {
+    type: String,
+    required: true,
+    minLength: 3,
+    maxLength: 30,
+    pattern: "^[a-zA-Z]+$",
+  },
+  lastName: {
+    type: String,
+    required: true,
+    minLength: 3,
+    maxLength: 30,
+    pattern: "^[a-zA-Z]+$",
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    minLength: 10,
+    maxLength: 30,
+    pattern: "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",
+  },
+  contact: {
+    type: String,
+    required: true,
+    length: 10,
+    pattern: "^[0-9]+$",
+  },
 
-const userSchema = new mongoose.Schema({
-    firstName: {
-        type: String,
-        required: true,
-        minLength: 3,
-        maxLength: 30,
-        pattern: "^[a-zA-Z]+$",
-    },
-    lastName: {
-        type: String,
-        required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        
-    },
-    contact:{
-        type: String,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    role: {
-        type: String,
-        enum: ["admin", "user"],
-        default: "user",
-    },
+  role: {
+    type: String,
+    enum: ["super_admin", "admin", "business_user", "user", "guest"],
+    default: "guest",
+  },
+  profilePic: {
+    type: String,
+    required: false,
+  },
 });
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("Users", userModel);

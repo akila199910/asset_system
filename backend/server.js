@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import mainRouter from "./routes/router.js";
 
 dotenv.config();
 const app = express();
@@ -11,9 +12,7 @@ connectDB();
 // Middleware to parse JSON requests
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
+app.use('/api/v1', mainRouter);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
