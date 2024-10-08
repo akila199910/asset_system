@@ -8,7 +8,8 @@ class MainRouter {
   }
   usersMainRoutes() {
     this.router.use("/users", userRoute); // Define the user-related routes
-    this.router.use("/users/update", userRoute);
+    
+    // this.router.use("/users/update", userRoute);
   }
 }
 
