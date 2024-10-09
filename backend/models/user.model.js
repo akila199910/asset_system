@@ -29,7 +29,11 @@ const userModel = new mongoose.Schema({
     length: 10,
     pattern: "^[0-9]+$",
   },
-
+  status: {
+    type: Boolean,
+    enum: [true, false],
+    default: true,
+  },
   role: {
     type: String,
     enum: ["super_admin", "admin", "business_user", "user", "guest"],

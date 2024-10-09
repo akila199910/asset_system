@@ -16,8 +16,8 @@ const userSchema = {
     contact: {
       type: "string",
       pattern: "^[0-9]{10}$",
-      minLength: 10, 
-      maxLength: 10 
+      minLength: 10,
+      maxLength: 10,
     },
     email: {
       type: "string",
@@ -28,6 +28,11 @@ const userSchema = {
     role: {
       type: "string",
       enum: ["super_admin", "admin", "business_user", "user", "guest"],
+    },
+    status: {
+      type: "boolean",
+      enum: [true, false],
+      default: true,
     },
     profilePic: {
       type: "string",

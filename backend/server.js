@@ -12,7 +12,7 @@ connectDB();
 // Middleware to parse JSON requests
 app.use(express.json());
 
-app.use('/api/v1', mainRouter);
+app.use("/api/v1", mainRouter);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
