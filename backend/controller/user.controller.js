@@ -1,30 +1,39 @@
 import userModel from "../models/user.model.js";
 import userProfileModel from "../models/userprofile.model.js";
+import { validateUserCreate } from "../validators/users/users.create.validate.js";
+import mongoose from "mongoose";
 
 class UserController {
   async createUser(newUser) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
-      const user = new userModel(newUser); // Create a new instance of the user model
-      await user.save();
+      await validateUserCreate(newUser);
+
+      const user = new userModel(newUser);
+      await user.save({ session });
 
       const userProfile = new userProfileModel({
         userId: user._id,
-        profilePic: newUser.profilePic ? newUser.profilePic : "userprofile.png",
+        profilePic: newUser.profilePic || "userprofile.png",
       });
-      await userProfile.save();
+      await userProfile.save({ session });
+
+      await session.commitTransaction();
 
       return { user, userProfile };
     } catch (error) {
-      // Check if it's a Mongoose validation error
-      if (error.errors) {
-        const messages = Object.values(error.errors).map((val) => val.message); // Extract error messages
-        throw new Error(messages.join(", "));
-      } else {
-        // Handle other types of errors (e.g., unique constraint, connection issues)
-        throw new Error(
-          error.message || "An error occurred while creating the user"
-        );
-      }
+      await session.abortTransaction();
+
+      const errorResponse = {
+        message: error.message || "An error occurred",
+        errors: error.errors || {},
+      };
+
+      throw errorResponse;
+    } finally {
+      session.endSession();
     }
   }
 

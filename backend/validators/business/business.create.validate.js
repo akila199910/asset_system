@@ -1,6 +1,6 @@
-import { validateBusinessEmail } from "../help/business_email.help.js";
-import { validateUserContact } from "../help/contact.help.js";
-import { validateUserEmail } from "../help/email.help.js";
+import { validateBusinessEmail } from "../../help/business_email.help.js";
+import { validateUserContact } from "../../help/contact.help.js";
+import { validateUserEmail } from "../../help/email.help.js";
 
 export const validateBusinessCreate = async (new_business) => {
   const errors = {};

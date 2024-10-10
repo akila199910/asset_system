@@ -10,9 +10,17 @@ class UserRoute {
   }
 
   userRoutes() {
-    this.router.post("/",jsonRequestBodyValidator(userSchema),this.createUser.bind(this)); // Bind to the instance
+    this.router.post(
+      "/",
+      jsonRequestBodyValidator(userSchema),
+      this.createUser.bind(this)
+    ); // Bind to the instance
     this.router.get("/", this.getAllUsers.bind(this));
-    this.router.put("/:id",jsonRequestBodyValidator(userSchema),this.updateUser.bind(this));
+    this.router.put(
+      "/:id",
+      jsonRequestBodyValidator(userSchema),
+      this.updateUser.bind(this)
+    );
     this.router.delete("/:id", this.deleteUser.bind(this));
 
     this.router.get("/role", this.getUsersByRole.bind(this));
@@ -23,8 +31,14 @@ class UserRoute {
     try {
       const result = await userController.createUser(newUser);
       res.status(201).json(result);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
+    } catch (error) {
+      const status = error.status || 500;
+      const message = error.message || "Internal Server Error";
+
+      res.status(status).json({
+        message,
+        errors: error.errors || {},
+      });
     }
   }
 
