@@ -1,13 +1,18 @@
 import businessModel from "../models/business.model.js";
 import userModel from "../models/user.model.js";
 import userprofileModel from "../models/userprofile.model.js";
+import { validateBusinessCreate } from "../validators/business/business.create.validate.js";
 
 class BusinessController {
   async createBusiness(new_business) {
-    const session = await userModel.startSession();
-    session.startTransaction();
+    let session = null;
 
     try {
+      
+      await validateBusinessCreate(new_business);
+      session = await userModel.startSession();
+      session.startTransaction();
+
       // Create the user
       const user = new userModel({
         firstName: new_business.firstName,
@@ -17,7 +22,6 @@ class BusinessController {
         role: new_business.role,
         status: new_business.owner_status,
       });
-
       await user.save({ session });
 
       // Create the user profile
@@ -25,7 +29,6 @@ class BusinessController {
         userId: user._id,
         profilePic: new_business.profilePic || "userprofile.png",
       });
-
       await userProfile.save({ session });
 
       // Create the business
@@ -37,21 +40,27 @@ class BusinessController {
         status: new_business.status,
         ownerId: user._id,
       });
-
       await createdBusiness.save({ session });
 
       // Commit the transaction if everything went well
       await session.commitTransaction();
-      session.endSession();
-
       return createdBusiness;
     } catch (error) {
-      // Rollback the transaction in case of error
-      await session.abortTransaction();
-      session.endSession();
+      // If session exists, abort the transaction
+      if (session) {
+        await session.abortTransaction();
+      }
 
-      console.error("Error creating business:", error);
-      throw new Error("Unable to create business: " + error.message);
+      const errorResponse = {
+        message: error.message || "An error occurred",
+        errors: error.errors || {},
+      };
+
+      throw errorResponse;
+    } finally {
+      if (session) {
+        await session.endSession();
+      }
     }
   }
 }

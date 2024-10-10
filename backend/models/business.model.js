@@ -6,7 +6,6 @@ const businessModel = new mongoose.Schema({
     required: true,
     minLength: 3,
     maxLength: 30,
-    pattern: "^[a-zA-Z]+$",
     unique: false,
   },
   businessEmail: {
@@ -15,7 +14,6 @@ const businessModel = new mongoose.Schema({
     unique: true,
     minLength: 10,
     maxLength: 30,
-    pattern: "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",
   },
   address: {
     type: String,
@@ -28,7 +26,6 @@ const businessModel = new mongoose.Schema({
     required: true,
     minLength: 5,
     maxLength: 30,
-    pattern: "^[a-zA-Z]+$",
   },
   status: {
     type: Boolean,

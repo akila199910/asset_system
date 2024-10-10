@@ -6,14 +6,12 @@ const userModel = new mongoose.Schema({
     required: true,
     minLength: 3,
     maxLength: 30,
-    pattern: "^[a-zA-Z]+$",
   },
   lastName: {
     type: String,
     required: true,
     minLength: 3,
     maxLength: 30,
-    pattern: "^[a-zA-Z]+$",
   },
   email: {
     type: String,
@@ -21,13 +19,12 @@ const userModel = new mongoose.Schema({
     unique: true,
     minLength: 10,
     maxLength: 30,
-    pattern: "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",
   },
   contact: {
     type: String,
     required: true,
     length: 10,
-    pattern: "^[0-9]+$",
+    unique: true,
   },
   status: {
     type: Boolean,
