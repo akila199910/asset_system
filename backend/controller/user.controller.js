@@ -2,6 +2,7 @@ import userModel from "../models/user.model.js";
 import userProfileModel from "../models/userprofile.model.js";
 import { validateUserCreate } from "../validators/users/users.create.validate.js";
 import mongoose from "mongoose";
+import { validateUserUpdate } from "../validators/users/users.update.validation.js";
 
 class UserController {
 
@@ -56,18 +57,7 @@ class UserController {
 
   async updateUser(id, updatedUser) {
     try {
-      const currentUser = await userModel.findById(id);
-      if (!currentUser) {
-        throw new Error("User not found");
-      }
-
-      if (updatedUser.email && updatedUser.email !== currentUser.email) {
-        await validateUserCreate(updatedUser);
-      }
-
-      if (updatedUser.contact && updatedUser.contact !== currentUser.contact) {
-        await validateUserCreate(updatedUser.contact);
-      }
+      await validateUserUpdate(updatedUser);
 
       const user = await userModel.findByIdAndUpdate(id, updatedUser, {
         new: true,
