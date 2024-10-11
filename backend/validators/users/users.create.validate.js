@@ -1,16 +1,17 @@
-import { validateUserEmail } from "../../help/email.help.js";
-import { validateUserContact } from "../../help/contact.help.js";
+import { validateCreateUserContact } from "../../help/contact.help.js";
+import { validateCreateUserEmail } from "../../help/email.help.js";
+
 
 export const validateUserCreate = async (new_user) => {
   const errors = {};
 
   try {
-    await validateUserEmail(new_user.email);
+    await validateCreateUserEmail(new_user.email);
   } catch (emailError) {
     errors.email = "User already exists with this email address.";
   }
   try {
-    await validateUserContact(new_user.contact);
+    await validateCreateUserContact(new_user.contact);
   } catch (contactError) {
     errors.contact = "User already exists with this contact number.";
   }

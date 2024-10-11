@@ -9,7 +9,7 @@ class MainRouter {
     this.businessMainRoutes();
   }
   usersMainRoutes() {
-    this.router.use("/users", userRoute); // Define the user-related routes
+    this.router.use("/users", userRoute);
   }
   businessMainRoutes() {
     this.router.use("/business", businessRoute);

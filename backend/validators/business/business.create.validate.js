@@ -1,24 +1,24 @@
-import { validateBusinessEmail } from "../../help/business_email.help.js";
-import { validateUserContact } from "../../help/contact.help.js";
-import { validateUserEmail } from "../../help/email.help.js";
+import { validateBusinessCreateEmail } from "../../help/business_email.help.js";
+import { validateCreateUserContact } from "../../help/contact.help.js";
+import { validateCreateUserEmail } from "../../help/email.help.js";
 
 export const validateBusinessCreate = async (new_business) => {
   const errors = {};
 
   try {
-    await validateUserEmail(new_business.email);
+    await validateCreateUserEmail(new_business.email);
   } catch (emailError) {
     errors.email = "User already exists with this email address.";
   }
 
   try {
-    await validateBusinessEmail(new_business.businessEmail);
+    await validateBusinessCreateEmail(new_business.businessEmail);
   } catch (business_emailError) {
     errors.business_email = "Business already exists with this email address.";
   }
 
   try {
-    await validateUserContact(new_business.contact);
+    await validateCreateUserContact(new_business.contact);
   } catch (contactError) {
     errors.contact = "User already exists with this contact number.";
   }
