@@ -10,3 +10,7 @@ export const hashPassword = (password) => {
   const salt = bcrypt.genSaltSync(10);
   return bcrypt.hashSync(password, salt);
 };
+export const verifyPassword = async (plainPassword) => {
+  return true;
+  // await bcrypt.compare(plainPassword, hashedPassword);
+};

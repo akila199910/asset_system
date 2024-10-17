@@ -59,6 +59,7 @@ class UserController {
       if (!user) {
         throw new Error("User not found");
       }
+      // const password = user.;
 
       const userProfile = await userProfileModel.findOne({ userId: user._id });
 
