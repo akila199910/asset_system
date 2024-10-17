@@ -20,6 +20,11 @@ const userModel = new mongoose.Schema({
     minLength: 10,
     maxLength: 30,
   },
+  password: {
+    type: String,
+    required: false,
+    minLength: 8,
+  },
   contact: {
     type: String,
     required: true,

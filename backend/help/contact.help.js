@@ -18,7 +18,7 @@ export const validateCreateUserContact = async (new_contact) => {
   }
 };
 
-export const checkUpdateUserContact = async (new_contact, user_id) => {
+export const checkUpdateUserContact = async (user_id, new_contact) => {
   const isContactExist = await userModel.findOne({
     contact: new_contact,
     _id: { $ne: user_id },
@@ -26,8 +26,8 @@ export const checkUpdateUserContact = async (new_contact, user_id) => {
   return !!isContactExist;
 };
 
-export const validateUpdateUserContact = async (new_contact, user_id) => {
-  const isContactExist = await checkUpdateUserContact(new_contact, user_id);
+export const validateUpdateUserContact = async (user_id, new_contact) => {
+  const isContactExist = await checkUpdateUserContact(user_id, new_contact);
   if (isContactExist) {
     let errorDetails = {
       message: "Validation Error: Contact number conflict detected.",
@@ -37,4 +37,4 @@ export const validateUpdateUserContact = async (new_contact, user_id) => {
       "User already exists with this contact number.";
     throw errorDetails;
   }
-}
+};

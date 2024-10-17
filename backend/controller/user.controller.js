@@ -3,9 +3,12 @@ import userProfileModel from "../models/userprofile.model.js";
 import { validateUserCreate } from "../validators/users/users.create.validate.js";
 import mongoose from "mongoose";
 import { validateUserUpdate } from "../validators/users/users.update.validation.js";
+import {
+  generatePassword,
+  hashPassword,
+} from "../utility/password.utility.js";
 
 class UserController {
-
   async createUser(newUser) {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -13,7 +16,18 @@ class UserController {
     try {
       await validateUserCreate(newUser);
 
-      const user = new userModel(newUser);
+      const password = generatePassword();
+      const hashedPassword = hashPassword(password);
+
+      const user = new userModel({
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        contact: newUser.contact,
+        email: newUser.email,
+        password: hashedPassword,
+        role: newUser.role,
+        status: newUser.status,
+      });
       await user.save({ session });
 
       const userProfile = new userProfileModel({
@@ -50,14 +64,13 @@ class UserController {
 
       return { user, userProfile };
     } catch (error) {
-      console.error("Error fetching user:", error);
       throw new Error("Unable to fetch user.");
     }
   }
 
   async updateUser(id, updatedUser) {
     try {
-      await validateUserUpdate(updatedUser);
+      await validateUserUpdate(id, updatedUser);
 
       const user = await userModel.findByIdAndUpdate(id, updatedUser, {
         new: true,
@@ -72,7 +85,7 @@ class UserController {
 
           return { user, userProfile };
         } else {
-          return user;
+          return { user };
         }
       } else {
         throw new Error("User not found");
