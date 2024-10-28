@@ -20,6 +20,11 @@ const userModel = new mongoose.Schema({
     minLength: 10,
     maxLength: 30,
   },
+  password: {
+    type: String,
+    required: false,
+    minLength: 8,
+  },
   contact: {
     type: String,
     required: true,
@@ -37,5 +42,13 @@ const userModel = new mongoose.Schema({
     default: "guest",
   },
 });
+
+userModel.virtual("profile", {
+  ref: "UserProfiles",
+  localField: "_id",
+  foreignField: "userId",
+});
+
+userModel.set("toJSON", { virtuals: true });
 
 export default mongoose.model("Users", userModel);

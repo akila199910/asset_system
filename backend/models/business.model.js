@@ -6,7 +6,7 @@ const businessModel = new mongoose.Schema({
     required: true,
     minLength: 3,
     maxLength: 30,
-    unique: false,
+    unique: true,
   },
   businessEmail: {
     type: String,

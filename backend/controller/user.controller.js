@@ -1,49 +1,82 @@
 import userModel from "../models/user.model.js";
 import userProfileModel from "../models/userprofile.model.js";
+import { validateUserCreate } from "../validators/users/users.create.validate.js";
+import mongoose from "mongoose";
+import { validateUserUpdate } from "../validators/users/users.update.validation.js";
+import { generatePassword, hashPassword } from "../utility/password.utility.js";
 
 class UserController {
-  async createUser(newUser) {
+  async createUser(newUser, res) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    let transactionCommitted = false;
+
     try {
-      const user = new userModel(newUser); // Create a new instance of the user model
-      await user.save();
+      await validateUserCreate(newUser);
+
+      const password = generatePassword();
+      const hashedPassword = hashPassword(password);
+
+      const user = new userModel({
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        contact: newUser.contact,
+        email: newUser.email,
+        password: hashedPassword,
+        role: newUser.role,
+        status: newUser.status,
+      });
+      await user.save({ session });
 
       const userProfile = new userProfileModel({
         userId: user._id,
-        profilePic: newUser.profilePic ? newUser.profilePic : "userprofile.png",
+        profilePic: newUser.profilePic || "userprofile.png",
       });
-      await userProfile.save();
+      await userProfile.save({ session });
 
-      return { user, userProfile };
+      await session.commitTransaction();
+      transactionCommitted = true;
+
+      return res
+        .status(201)
+        .json({ user, userProfile, message: "User created successfully" });
     } catch (error) {
-      // Check if it's a Mongoose validation error
-      if (error.errors) {
-        const messages = Object.values(error.errors).map((val) => val.message); // Extract error messages
-        throw new Error(messages.join(", "));
-      } else {
-        // Handle other types of errors (e.g., unique constraint, connection issues)
-        throw new Error(
-          error.message || "An error occurred while creating the user"
-        );
+      if (!transactionCommitted) {
+        await session.abortTransaction();
       }
+
+      const errorResponse = {
+        message: error.message || "An error occurred",
+        errors: error.errors || {},
+      };
+      const status = error.status || 500;
+
+      return res.status(status).json(errorResponse);
+    } finally {
+      session.endSession();
     }
   }
 
-  async getAllUsers() {
+  async getUserById(id) {
     try {
-      // Fetch all user profiles and populate user details
-      const all_user_profiles = await userProfileModel
-        .find()
-        .populate("userId");
+      const user = await userModel.findById(id);
+      if (!user) {
+        throw new Error("User not found");
+      }
+      // const password = user.;
 
-      return all_user_profiles; // This will return profiles with user details populated
+      const userProfile = await userProfileModel.findOne({ userId: user._id });
+
+      return { user, userProfile };
     } catch (error) {
-      console.error("Error fetching users and profiles:", error);
-      throw new Error("Unable to fetch users and profiles.");
+      throw new Error("Unable to fetch user.");
     }
   }
 
   async updateUser(id, updatedUser) {
     try {
+      await validateUserUpdate(id, updatedUser);
+
       const user = await userModel.findByIdAndUpdate(id, updatedUser, {
         new: true,
       });
@@ -57,14 +90,18 @@ class UserController {
 
           return { user, userProfile };
         } else {
-          return user;
+          return { user };
         }
       } else {
         throw new Error("User not found");
       }
     } catch (error) {
-      console.error("Error updating user:", error);
-      throw new Error("Unable to update user.");
+      const errorResponse = {
+        message: error.message || "An error occurred",
+        errors: error.errors || {},
+      };
+
+      throw errorResponse;
     }
   }
 
@@ -89,6 +126,15 @@ class UserController {
     }
   }
 
+  async getAllUsers() {
+    try {
+      const all_users = await userModel.find().populate("profile");
+
+      return all_users;
+    } catch (error) {
+      throw new Error("Unable to fetch users and profiles.");
+    }
+  }
   async getUsersByRole(role) {
     try {
       // Find users with the specified role
