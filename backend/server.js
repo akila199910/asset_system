@@ -1,10 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import connectDB from "./config/db.js";
 import mainRouter from "./routes/router.js";
 
 dotenv.config();
 const app = express();
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 // Connect to the database
 connectDB();

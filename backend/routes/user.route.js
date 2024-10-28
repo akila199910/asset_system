@@ -26,7 +26,7 @@ class UserRoute {
   async createUser(req, res) {
     const newUser = req.body;
     try {
-      const result = await userController.createUser(newUser);
+      const result = await userController.createUser(newUser, res);
       res.status(201).json(result);
     } catch (error) {
       const status = error.status || 500;

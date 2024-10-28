@@ -3,15 +3,13 @@ import userProfileModel from "../models/userprofile.model.js";
 import { validateUserCreate } from "../validators/users/users.create.validate.js";
 import mongoose from "mongoose";
 import { validateUserUpdate } from "../validators/users/users.update.validation.js";
-import {
-  generatePassword,
-  hashPassword,
-} from "../utility/password.utility.js";
+import { generatePassword, hashPassword } from "../utility/password.utility.js";
 
 class UserController {
-  async createUser(newUser) {
+  async createUser(newUser, res) {
     const session = await mongoose.startSession();
     session.startTransaction();
+    let transactionCommitted = false;
 
     try {
       await validateUserCreate(newUser);
@@ -37,17 +35,23 @@ class UserController {
       await userProfile.save({ session });
 
       await session.commitTransaction();
+      transactionCommitted = true;
 
-      return { user, userProfile };
+      return res
+        .status(201)
+        .json({ user, userProfile, message: "User created successfully" });
     } catch (error) {
-      await session.abortTransaction();
+      if (!transactionCommitted) {
+        await session.abortTransaction();
+      }
 
       const errorResponse = {
         message: error.message || "An error occurred",
         errors: error.errors || {},
       };
+      const status = error.status || 500;
 
-      throw errorResponse;
+      return res.status(status).json(errorResponse);
     } finally {
       session.endSession();
     }
