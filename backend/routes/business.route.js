@@ -10,8 +10,10 @@ class BusinessRoute {
   }
 
   businessRoutes() {
-    // this.router.get("/", businessController.getAllBusiness.bind(this));
+    this.router.get("/", (req, res) => businessController.getAllBusiness(req, res));
     this.router.post("/",jsonRequestBodyValidator(businessSchema),(req,res)=> businessController.createBusiness(req,res));
+    this.router.get("/:id", (req, res) => businessController.getBusinessById(req, res));
+    this.router.put("/:id", (req, res) => businessController.updateBusiness(req, res))
   }
 }
 
