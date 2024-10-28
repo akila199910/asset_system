@@ -1,4 +1,5 @@
 import userModel from "../models/user.model.js";
+import userProfileModel from "../models/userprofile.model.js";
 import { hashPassword, verifyPassword } from "../utility/password.utility.js";
 import { validateUserCreate } from "../validators/users/users.create.validate.js";
 
@@ -37,10 +38,13 @@ class AuthenticationController {
 
   async signup(req, res) {
     const new_registered_user = req.body;
+    let session = null;
 
     try {
       const isValid = await validateUserCreate(res, new_registered_user);
-      if (!isValid) return; 
+      if (!isValid) return;
+      session = await userModel.startSession();
+      session.startTransaction();
 
       const new_created_user = new userModel({
         firstName: new_registered_user.firstName,
@@ -52,16 +56,33 @@ class AuthenticationController {
       });
       const hashedPassword = await hashPassword(new_registered_user.password);
       new_created_user.password = hashedPassword;
-      await new_created_user.save();
+      await new_created_user.save({ session });
+
+      const userProfile = new userProfileModel({
+        userId: new_created_user._id,
+        profilePic: new_created_user.profilePic || "userprofile.png",
+      });
+      await userProfile.save({ session });
+      await session.commitTransaction();
+
       res.status(201).json({
         message: "User created successfully.",
         user: new_created_user,
+        userProfile: userProfile,
       });
     } catch (error) {
+      if (session) {
+        await session.abortTransaction();
+      }
+
       const status = error.statuscode || 500;
       res.status(status).json({
         message: error.message || "Internal Server Error",
       });
+    } finally {
+      if (session) {
+        await session.endSession();
+      }
     }
   }
 }

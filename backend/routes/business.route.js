@@ -10,27 +10,8 @@ class BusinessRoute {
   }
 
   businessRoutes() {
-    this.router.post(
-      "/",
-      jsonRequestBodyValidator(businessSchema),
-      this.createBusiness.bind(this)
-    );
-  }
-
-  async createBusiness(req, res) {
-    const new_business = req.body;
-    try {
-      const result = await businessController.createBusiness(new_business);
-      res.status(201).json(result);
-    } catch (error) {
-      const status = error.status || 500;
-      const message = error.message || "Internal Server Error";
-
-      res.status(status).json({
-        message,
-        errors: error.errors || {},
-      });
-    }
+    // this.router.get("/", businessController.getAllBusiness.bind(this));
+    this.router.post("/",jsonRequestBodyValidator(businessSchema),(req,res)=> businessController.createBusiness(req,res));
   }
 }
 

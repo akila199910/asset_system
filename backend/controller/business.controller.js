@@ -4,59 +4,64 @@ import userprofileModel from "../models/userprofile.model.js";
 import { validateBusinessCreate } from "../validators/business/business.create.validate.js";
 
 class BusinessController {
-  async createBusiness(new_business) {
+  async createBusiness(req, res) {
+    const new_registered_business = req.body;
     let session = null;
 
     try {
-      
-      await validateBusinessCreate(new_business);
+      const isValid = await validateBusinessCreate(
+        res,
+        new_registered_business
+      );
+
+      if (!isValid) return;
+
       session = await userModel.startSession();
       session.startTransaction();
 
-      // Create the user
       const user = new userModel({
-        firstName: new_business.firstName,
-        lastName: new_business.lastName,
-        contact: new_business.contact,
-        email: new_business.email,
-        role: new_business.role,
-        status: new_business.owner_status,
+        firstName: new_registered_business.firstName,
+        lastName: new_registered_business.lastName,
+        contact: new_registered_business.contact,
+        email: new_registered_business.email,
+        role: new_registered_business.role,
+        status: new_registered_business.owner_status,
       });
       await user.save({ session });
 
-      // Create the user profile
       const userProfile = new userprofileModel({
         userId: user._id,
-        profilePic: new_business.profilePic || "userprofile.png",
+        profilePic: new_registered_business.profilePic || "userprofile.png",
       });
       await userProfile.save({ session });
 
-      // Create the business
-      const createdBusiness = new businessModel({
-        businessName: new_business.businessName,
-        businessEmail: new_business.businessEmail,
-        address: new_business.address,
-        city: new_business.city,
-        status: new_business.status,
+      const created_business = new businessModel({
+        businessName: new_registered_business.businessName,
+        businessEmail: new_registered_business.businessEmail,
+        address: new_registered_business.address,
+        city: new_registered_business.city,
+        status: new_registered_business.status,
         ownerId: user._id,
       });
-      await createdBusiness.save({ session });
+      await created_business.save({ session });
 
-      // Commit the transaction if everything went well
       await session.commitTransaction();
-      return createdBusiness;
+      res.status(201).json({
+        message: "Business created successfully.",
+        business: created_business,
+        owner: user,
+        profile: userProfile,
+        status: true,
+      });
     } catch (error) {
-      // If session exists, abort the transaction
       if (session) {
         await session.abortTransaction();
       }
 
-      const errorResponse = {
-        message: error.message || "An error occurred",
-        errors: error.errors || {},
-      };
-
-      throw errorResponse;
+      const status = error.statuscode || 500;
+      res.status(status).json({
+        message: error.message || "Internal Server Error",
+      });
     } finally {
       if (session) {
         await session.endSession();
