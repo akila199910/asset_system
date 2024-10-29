@@ -3,6 +3,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthenticationRoute from "./Routes/AuthenticationRoutes/AuthenticationRoute";
 import AdminRoutes from "./Routes/AdminRoutes/AdminRoutes";
+import ProfileRoute from "./Routes/ProfileRoutes/ProfileRoute";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<AuthenticationRoute />} />
           <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/profile" element={<ProfileRoute />} />
         </Routes>
       </BrowserRouter>
     </div>

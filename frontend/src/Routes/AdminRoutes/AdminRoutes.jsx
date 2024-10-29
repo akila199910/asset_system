@@ -5,7 +5,7 @@ import AdminDashboard from '../../Pages/Admin/AdminDashboard'
 const AuthenticationRoute = () => {
   return (
     <Routes>
-        <Route path="admin-dashboard" element={<AdminDashboard />}/>
+        <Route path="dashboard" element={<AdminDashboard />}/>
     </Routes>
 
   )

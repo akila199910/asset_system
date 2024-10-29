@@ -15,8 +15,7 @@ export const LoginForm = () => {
     try {
       const response = await login(userName, password);
       alert(response.message);
-      // Handle successful login, like saving user data or redirecting
-      navigate("/admin/admin-dashboard");
+      navigate("/admin/dashboard");
     } catch (err) {
       setError(err.message || "Login failed, please try again.");
     }

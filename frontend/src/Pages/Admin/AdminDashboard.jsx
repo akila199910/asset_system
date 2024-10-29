@@ -12,7 +12,6 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <main className="flex-grow w-full p-4">
         <h1 className="text-2xl font-bold">Welcome to the Admin Dashboard</h1>
-        {/* Additional content can go here */}
       </main>
     </div>
   );
