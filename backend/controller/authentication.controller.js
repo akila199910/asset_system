@@ -1,5 +1,6 @@
 import userModel from "../models/user.model.js";
 import userProfileModel from "../models/userprofile.model.js";
+import generateTokenAndSetCookie from "../utility/genarateAndcookie.js";
 import { hashPassword, verifyPassword } from "../utility/password.utility.js";
 import { validateUserCreate } from "../validators/users/users.create.validate.js";
 
@@ -7,7 +8,8 @@ class AuthenticationController {
   async login(req, res) {
     const { email, password } = req.body;
     try {
-      const user = await userModel.findOne({ email });
+      // Fetch user with profile populated
+      const user = await userModel.findOne({ email }).populate("profile");
 
       if (!user) {
         const error = new Error("User not found");
@@ -15,74 +17,82 @@ class AuthenticationController {
         throw error;
       }
 
+      // Verify password
       const isMatch = await verifyPassword(password, user.password);
-
       if (!isMatch) {
         const error = new Error("Invalid password");
         error.statusCode = 401;
         throw error;
       }
 
+      // Generate token and set cookie
+      const profilePic = user.profile ? user.profile.profilePic : null;
+      generateTokenAndSetCookie(user, res);
+
       res.status(200).json({
         message: "User login successfully.",
-        user: user,
+        user,
+        profilePic,
+        status: true,
       });
     } catch (error) {
       const statusCode = error.statusCode || 500;
       res.status(statusCode).json({
         message: error.message || "Internal server error",
-        statusCode: statusCode,
+        statusCode,
+        status: false,
       });
     }
   }
 
   async signup(req, res) {
-    const new_registered_user = req.body;
+    const { firstName, lastName, contact, email, role, status, password } = req.body;
     let session = null;
 
     try {
-      const isValid = await validateUserCreate(res, new_registered_user);
+      // Validate input data
+      const isValid = await validateUserCreate(res, req.body);
       if (!isValid) return;
+
+      // Start session for transactional save
       session = await userModel.startSession();
       session.startTransaction();
 
-      const new_created_user = new userModel({
-        firstName: new_registered_user.firstName,
-        lastName: new_registered_user.lastName,
-        contact: new_registered_user.contact,
-        email: new_registered_user.email,
-        role: new_registered_user.role,
-        status: new_registered_user.status,
+      // Create user
+      const newUser = new userModel({
+        firstName,
+        lastName,
+        contact,
+        email,
+        role,
+        status,
+        password: await hashPassword(password),
       });
-      const hashedPassword = await hashPassword(new_registered_user.password);
-      new_created_user.password = hashedPassword;
-      await new_created_user.save({ session });
+      await newUser.save({ session });
 
+      // Create user profile
       const userProfile = new userProfileModel({
-        userId: new_created_user._id,
-        profilePic: new_created_user.profilePic || "userprofile.png",
+        userId: newUser._id,
+        profilePic: "userprofile.png",
       });
       await userProfile.save({ session });
+
       await session.commitTransaction();
 
       res.status(201).json({
         message: "User created successfully.",
-        user: new_created_user,
-        userProfile: userProfile,
+        user: newUser,
+        userProfile,
       });
     } catch (error) {
-      if (session) {
-        await session.abortTransaction();
-      }
+      if (session) await session.abortTransaction();
 
-      const status = error.statuscode || 500;
-      res.status(status).json({
+      const statusCode = error.statusCode || 500;
+      res.status(statusCode).json({
         message: error.message || "Internal Server Error",
       });
     } finally {
-      if (session) {
-        await session.endSession();
-      }
+      if (session) await session.endSession();
     }
   }
 }

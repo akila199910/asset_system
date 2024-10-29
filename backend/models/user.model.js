@@ -47,8 +47,10 @@ userModel.virtual("profile", {
   ref: "UserProfiles",
   localField: "_id",
   foreignField: "userId",
+  justOne: true,
 });
 
+userModel.set("toObject", { virtuals: true });
 userModel.set("toJSON", { virtuals: true });
 
 export default mongoose.model("Users", userModel);

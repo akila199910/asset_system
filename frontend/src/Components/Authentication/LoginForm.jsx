@@ -5,26 +5,28 @@ export const LoginForm = () => {
   const [password, setPassword] = useState();
   const handleLoginFormSubmit = async (e) => {
     e.preventDefault();
-    
+
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify({
       email: userName,
-      password: password
+      password: password,
     });
 
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
       body: raw,
-      redirect: "follow"
+      redirect: "follow",
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/v1/auth/login", requestOptions);
+      const response = await fetch(
+        "http://localhost:5000/api/v1/auth/login",
+        requestOptions
+      );
       const result = await response.json();
-      console.log(result);
       // Handle the response (e.g., store user data, redirect, show errors, etc.)
     } catch (error) {
       console.error("Error during login:", error);
