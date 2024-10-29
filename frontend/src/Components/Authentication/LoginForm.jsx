@@ -1,35 +1,24 @@
 import React, { useState } from "react";
+import { login } from "../../Api/AuthenticationApi/AuthenticationApi.jsx";
+import { useNavigate } from "react-router-dom";
 
 export const LoginForm = () => {
   const [userName, setUserName] = useState();
   const [password, setPassword] = useState();
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
   const handleLoginFormSubmit = async (e) => {
     e.preventDefault();
-
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    const raw = JSON.stringify({
-      email: userName,
-      password: password,
-    });
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
+    setError(""); 
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/v1/auth/login",
-        requestOptions
-      );
-      const result = await response.json();
-      // Handle the response (e.g., store user data, redirect, show errors, etc.)
-    } catch (error) {
-      console.error("Error during login:", error);
+      const response = await login(userName, password);
+      alert(response.message);
+      // Handle successful login, like saving user data or redirecting
+      navigate("/admin/admin-dashboard");
+    } catch (err) {
+      setError(err.message || "Login failed, please try again.");
     }
   };
   return (
@@ -59,6 +48,8 @@ export const LoginForm = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          {error && <p className="mt-4 text-red-500">{error}</p>}
+
           <div className="flex items-center justify-between mt-8">
             <div>
               <input type="checkbox" id="remember" />

@@ -1,10 +1,18 @@
 import "./App.css";
-import LoginPage from "./Pages/Authentication/LoginPage";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthenticationRoute from "./Routes/AuthenticationRoutes/AuthenticationRoute";
+import AdminRoutes from "./Routes/AdminRoutes/AdminRoutes";
 
 function App() {
   return (
     <div className="flex w-full h-screen">
-      <LoginPage />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<AuthenticationRoute />} />
+          <Route path="/admin/*" element={<AdminRoutes />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
