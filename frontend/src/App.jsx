@@ -12,7 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<AuthenticationRoute />} />
           <Route path="/admin/*" element={<AdminRoutes />} />
-          <Route path="/profile" element={<ProfileRoute />} />
+          <Route path="/users/profile" element={<ProfileRoute />} />
         </Routes>
       </BrowserRouter>
     </div>

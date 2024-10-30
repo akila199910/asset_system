@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import MyProfile from "../../Pages/user/MyProfile";
+import MyProfile from "../../Pages/Users/MyProfile";
 
 const ProfileRoute = () => {
   return (

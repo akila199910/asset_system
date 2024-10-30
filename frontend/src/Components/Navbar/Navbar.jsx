@@ -26,7 +26,7 @@ function Navbar() {
             <div className="absolute right-0 w-48 mt-2 text-black bg-white rounded shadow-lg">
               <ul className="py-2">
                 <li className="px-4 py-2 cursor-pointer hover:bg-gray-200">
-                 <Link to="/profile">My Profile</Link> 
+                 <Link to="/users/profile">My Profile</Link> 
                 </li>
                 <li className="px-4 py-2 cursor-pointer hover:bg-gray-200">
                   Settings

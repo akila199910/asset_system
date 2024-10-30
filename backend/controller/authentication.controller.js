@@ -25,7 +25,6 @@ class AuthenticationController {
         throw error;
       }
 
-      // Generate token and set cookie
       const profilePic = user.profile ? user.profile.profilePic : null;
       generateTokenAndSetCookie(user, res);
 

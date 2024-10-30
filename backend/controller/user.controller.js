@@ -159,6 +159,22 @@ class UserController {
       throw new Error("Unable to fetch users by role.");
     }
   }
+
+  async getUserProfile(req, res) {
+    try {
+      const user = await userModel
+        .findById(req.user.userId)
+        .populate("profile");
+
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      res.status(200).json({ user: user, status: true });
+    } catch (error) {
+      res.status(500).json({ error: "Unable to fetch user." });
+    }
+  }
 }
 
 const userController = new UserController();
