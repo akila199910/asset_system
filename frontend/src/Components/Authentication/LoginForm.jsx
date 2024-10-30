@@ -15,7 +15,7 @@ export const LoginForm = () => {
     try {
       const response = await login(userName, password);
       alert(response.message);
-      navigate("/admin/dashboard");
+      navigate("/admin/business");
     } catch (err) {
       setError(err.message || "Login failed, please try again.");
     }
