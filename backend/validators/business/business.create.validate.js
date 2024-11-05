@@ -72,8 +72,7 @@ export const validateBusinessCreate = async (res, new_business) => {
   }
 
   if (Object.keys(errors).length > 0) {
-    res.status(400).json({ errors, status: false });
-    return false;
+    throw { status: 400, errors, message: "Validation failed" };
   }
 
   return true;

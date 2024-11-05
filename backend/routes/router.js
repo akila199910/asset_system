@@ -19,7 +19,7 @@ class MainRouter {
 
   // Set up business routes (authentication can be added if needed)
   businessMainRoutes() {
-    this.router.use("/business", authenticateToken, businessRoute);
+    this.router.use("/business", businessRoute);
   }
 
   // Set up authentication routes

@@ -1,6 +1,7 @@
 import businessModel from "../models/business.model.js";
 import userModel from "../models/user.model.js";
 import userprofileModel from "../models/userprofile.model.js";
+import { generatePassword, hashPassword } from "../utility/password.utility.js";
 import { validateBusinessCreate } from "../validators/business/business.create.validate.js";
 import { validateBusinessUpdate } from "../validators/business/business.update.validate.js";
 
@@ -8,7 +9,7 @@ class BusinessController {
   async getAllBusiness(req, res) {
     try {
       const business = await businessModel.find();
-      res.json(business);
+      res.status(200).json({ businesses: business, status: true });
     } catch (error) {
       res.status(500).json({
         message: "An error occurred while fetching businesses",
@@ -32,13 +33,16 @@ class BusinessController {
       session = await userModel.startSession();
       session.startTransaction();
 
+      const password = generatePassword();
+      const hashedPassword = hashPassword(password);
       const user = new userModel({
         firstName: new_registered_business.firstName,
         lastName: new_registered_business.lastName,
         contact: new_registered_business.contact,
         email: new_registered_business.email,
-        role: new_registered_business.role,
+        role: new_registered_business.role || "business_user",
         status: new_registered_business.owner_status,
+        password: hashedPassword,
       });
       await user.save({ session });
 
@@ -71,9 +75,11 @@ class BusinessController {
         await session.abortTransaction();
       }
 
-      const status = error.statuscode || 500;
+      const status = error.status || 500;
       res.status(status).json({
         message: error.message || "Internal Server Error",
+        errors: error.errors || {},
+        status: false,
       });
     } finally {
       if (session) {
@@ -84,7 +90,12 @@ class BusinessController {
   async getBusinessById(req, res) {
     try {
       const business = await businessModel.findById(req.params.id);
-      res.status(200).json(business);
+      const owner = await userModel.findById(business.ownerId);
+
+      // if (business) {
+      //   const owner = await userModel.findById(business.ownerId);
+      // }
+      res.status(200).json({ business: business, user: owner, status: true });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
