@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import session from "express-session";
 
 import connectDB from "./config/db.js";
 import mainRouter from "./routes/router.js";
@@ -26,6 +27,15 @@ app.use(express.json());
 
 // Use cookie-parser middleware
 app.use(cookieParser());
+
+// Configure session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || "your_secret_key", // Replace with a secure key
+  resave: false, // Don't save session if unmodified
+  saveUninitialized: false, // Don't create session until something stored
+  cookie: { secure: false, httpOnly: true, maxAge: 3600000 } // Configure for production accordingly
+}));
+
 
 app.use("/api/v1", mainRouter);
 

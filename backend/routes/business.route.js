@@ -19,9 +19,14 @@ class BusinessRoute {
     this.router.get("/:id", (req, res) =>
       businessController.getBusinessById(req, res)
     );
-    this.router.put("/:id", (req, res) =>
+    this.router.put("/", (req, res) =>
       businessController.updateBusiness(req, res)
     );
+    // this.router.delete("/:id", (req, res) =>
+    //   businessController.deleteBusiness(req, res)
+    // );
+    this.router.post("/dashboard", (req, res) =>
+      businessController.moveToDashboard(req, res));
   }
 }
 

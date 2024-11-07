@@ -133,7 +133,7 @@ class BusinessController {
       if (!userProfile) throw new Error("User profile not found");
 
       const business = await businessModel.findByIdAndUpdate(
-        update_business.businessId,
+        update_business._id,
         {
           businessName: update_business.businessName,
           businessEmail: update_business.businessEmail,
@@ -151,6 +151,7 @@ class BusinessController {
         user,
         userProfile,
         business,
+        status: true,
       });
     } catch (error) {
       if (session) await session.abortTransaction();
@@ -159,6 +160,40 @@ class BusinessController {
       res.status(400).json({ error: error.message });
     } finally {
       if (session) session.endSession();
+    }
+  }
+
+  // async deleteBusiness(req, res) {
+  //   try {
+  //     const business = await businessModel.findByIdAndDelete(req.params.id);
+  //     const owner = await userModel.findByIdAndDelete(business.ownerId);
+  //     res.status(200).json({ business: business, user: owner, status: true });
+  //   } catch (error) {
+  //     res.status(400).json({ error: error.message });
+  //   }
+  // }
+
+  async moveToDashboard(req, res) {
+    const { businessId } = req.body;
+
+    try {
+      const business = await businessModel.findById(businessId);
+
+      if (!business) {
+        return res
+          .status(404)
+          .json({ status: false, message: "Business not found" });
+      }
+      req.session.businessId = businessId;
+      // console.log(req.session);
+
+      res.json({
+        status: true,
+        message: "Business added to session",
+        business,
+      });
+    } catch (error) {
+      res.status(500).json({ status: false, message: error.message });
     }
   }
 }

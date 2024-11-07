@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../../Components/Navbar/Navbar";
 import useBusiness from "../../../Hooks/BusinessHook/BusinessHook";
 import DataTable from "react-data-table-component";
@@ -6,17 +6,27 @@ import BusinessModal from "./BusinessModel";
 import {
   createBusinessApi,
   getBusinessByIdApi,
+  moveToDashboardApi,
+  updateBusinessApi,
 } from "../../../Api/BusinessApi/BusinessApi";
 
 const Business = () => {
   const { business, loading, error } = useBusiness();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [selectedBusinessId, setSelectedBusinessId] = useState(null); // ID of business to edit
 
   const columns = [
     {
       name: "Business Name",
-      selector: (row) => row.businessName,
+      cell: (row) => (
+        <div
+          className="flex space-x-2 font-bold"
+          onClick={() => moveToDashboard(row._id)}
+        >
+          {row.businessName}{" "}
+        </div>
+      ),
       sortable: true,
     },
     {
@@ -77,25 +87,78 @@ const Business = () => {
   };
 
   const handleEdit = async (row) => {
-    
-    // const response = await getBusinessByIdApi(row._id);
-    // console.log(response);
+    setSelectedBusinessId(null);
+    setSelectedBusinessId(row._id);
     setSelectedBusiness();
     setIsModalOpen(true);
-
-    // console.log("Edit Business:", row);
   };
+
+  useEffect(() => {
+    const fetchBusiness = async () => {
+      if (selectedBusinessId) {
+        const response = await getBusinessByIdApi(selectedBusinessId);
+        if (response.status === true) {
+          const { business, user } = response;
+
+          const combinedData = {
+            _id: business._id,
+            businessName: business.businessName,
+            businessEmail: business.businessEmail,
+            address: business.address,
+            city: business.city,
+            businessStatus: business.status,
+            ownerId: business.ownerId,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            contact: user.contact,
+            ownerStatus: user.status,
+            role: user.role,
+          };
+
+          setSelectedBusiness(combinedData);
+        } else {
+          console.log(response.error || "Error fetching business details");
+        }
+      }
+    };
+    fetchBusiness();
+  }, [selectedBusinessId]);
+
   const handleSubmit = async (formData) => {
     try {
-      const response = await createBusinessApi(formData);
-
-      if (response?.status === true) {
-        window.location.reload();
-      } else if (response?.status === false) {
-        console.log(response.message);
-        console.log("Error:", response.errors);
+      let response = {};
+      if (formData._id) {
+        response = await updateBusinessApi(formData);
+        if (response?.status === true) {
+          window.location.reload();
+        } else if (response?.status === false) {
+          console.log(response.message);
+          console.log("Error:", response.errors);
+        }
+      } else {
+        response = await createBusinessApi(formData);
+        if (response?.status === true) {
+          window.location.reload();
+        } else if (response?.status === false) {
+          console.log(response.message);
+          console.log("Error:", response.errors);
+        }
       }
     } catch (error) {}
+  };
+
+  const moveToDashboard = async (id) => {
+    try {
+      const response = await moveToDashboardApi(id);
+      if (response?.status === true) {
+        window.location.href = `/admin/dashboard`;
+      } else if (response?.status === false) {
+        console.log(response.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleDelete = (id) => {
@@ -109,9 +172,9 @@ const Business = () => {
     <div className="flex flex-col w-full h-screen">
       <Navbar />
 
-      <div className="flex mt-2 ">
+      <div className="flex m-6 ">
         <main className="flex-grow w-full p-4">
-          <div className="mb-4">
+          <div className="flex justify-end mb-4">
             <button
               onClick={handleAddBusiness}
               className="px-4 py-2 text-white bg-green-500 rounded"
@@ -119,20 +182,24 @@ const Business = () => {
               Add Business
             </button>
           </div>
-
-          <DataTable
-            title="Business List"
-            columns={columns}
-            data={business || []}
-            pagination
-            highlightOnHover
-            pointerOnHover
-          />
+          <div className="p-4 bg-white rounded">
+            <DataTable
+              title="Business List"
+              columns={columns}
+              data={business || []}
+              pagination
+              highlightOnHover
+              pointerOnHover
+            />
+          </div>
         </main>
       </div>
       <BusinessModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setSelectedBusiness(null);
+          setIsModalOpen(false);
+        }}
         onSubmit={handleSubmit}
         businessData={selectedBusiness}
       />

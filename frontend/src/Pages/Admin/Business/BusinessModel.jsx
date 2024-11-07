@@ -2,36 +2,38 @@ import React, { useState, useEffect } from "react";
 
 const BusinessModal = ({ isOpen, onClose, onSubmit, businessData = {} }) => {
   const [formData, setFormData] = useState({
+    _id: "",
     businessName: "",
     businessEmail: "",
     address: "",
     ownerId: "",
     city: "",
-    status: false,
+    businessStatus: false,
     profilePic: "",
     firstName: "",
     lastName: "",
     email: "",
     contact: "",
-    owner_status: false,
-    role: "business_user",	
+    ownerStatus: false,
+    role: "business_user",
   });
 
   useEffect(() => {
     if (businessData) {
       setFormData({
+        _id: businessData._id || "",
         businessName: businessData.businessName || "",
         businessEmail: businessData.businessEmail || "",
         address: businessData.address || "",
         ownerId: businessData.ownerId || "",
         city: businessData.city || "",
-        status: businessData.status || false,
+        businessStatus: businessData.businessStatus || false,
         profilePic: businessData.profilePic || "",
         firstName: businessData.firstName || "",
         lastName: businessData.lastName || "",
         email: businessData.email || "",
         contact: businessData.contact || "",
-        owner_status: businessData.owner_status || false,
+        ownerStatus: businessData.ownerStatus || false,
         role: businessData.role || "business_user",
       });
     }
@@ -44,7 +46,6 @@ const BusinessModal = ({ isOpen, onClose, onSubmit, businessData = {} }) => {
       [name]: type === "checkbox" ? checked : value,
     });
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -64,6 +65,12 @@ const BusinessModal = ({ isOpen, onClose, onSubmit, businessData = {} }) => {
           {/* Business Details Section */}
           <h3 className="mb-2 text-lg font-semibold">Business Details</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <input
+              type="hidden"
+              name="_id"
+              value={formData._id}
+              className="w-full p-2 border rounded"
+            />
             <div>
               <label className="block mb-1">Business Name</label>
               <input
@@ -113,7 +120,7 @@ const BusinessModal = ({ isOpen, onClose, onSubmit, businessData = {} }) => {
               <input
                 type="checkbox"
                 name="status"
-                checked={formData.status}
+                checked={formData.businessStatus}
                 onChange={handleChange}
                 className="form-checkbox"
               />
@@ -182,13 +189,12 @@ const BusinessModal = ({ isOpen, onClose, onSubmit, businessData = {} }) => {
               <input
                 type="checkbox"
                 name="owner_status"
-                checked={formData.owner_status}
+                checked={formData.ownerStatus}
                 onChange={handleChange}
                 className="form-checkbox"
               />
             </div>
             <div>
-              
               <input
                 type="hidden"
                 name="role"

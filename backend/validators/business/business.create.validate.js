@@ -9,14 +9,14 @@ export const validateBusinessCreate = async (res, new_business) => {
     businessEmail: { required: true, message: "Business email" },
     address: { required: true, min: 5, max: 30, message: "Address" },
     city: { required: true, min: 5, max: 30, message: "City" },
-    status: { required: true, message: "Status" },
+    status: { required: false, message: "Status" },
     firstName: { required: true, min: 3, max: 30, message: "First name" },
     lastName: { required: true, min: 3, max: 30, message: "Last name" },
     email: { required: true, message: "Email" },
     contact: { required: true, message: "Contact number" },
     password: { required: false, min: 8, message: "Password" },
     role: { required: true, message: "Role" },
-    status: { required: true, message: "Status" },
+    status: { required: false, message: "Status" },
   };
 
   for (const [field, rules] of Object.entries(validation)) {
