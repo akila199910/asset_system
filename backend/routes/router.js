@@ -2,6 +2,7 @@ import express from "express";
 import userRoute from "./user.route.js";
 import businessRoute from "./business.route.js";
 import authenticateRoutes from "./authentication.route.js";
+import dashboardRoute from "./dashboard.route.js";
 import { authenticateToken } from "../middleware/authenticateToken.js";
 
 class MainRouter {
@@ -10,8 +11,12 @@ class MainRouter {
     this.usersMainRoutes();
     this.businessMainRoutes();
     this.authenticateRoutes();
+    this.dashboardMainRoutes();
   }
 
+  dashboardMainRoutes() {
+    this.router.use("/dashboard", dashboardRoute);
+  }
   // Set up user routes with authentication
   usersMainRoutes() {
     this.router.use("/users", authenticateToken, userRoute);

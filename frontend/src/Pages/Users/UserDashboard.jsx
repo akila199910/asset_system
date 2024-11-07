@@ -2,7 +2,7 @@ import { useState } from "react";
 import Navbar from "../../Components/Navbar/Navbar";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 
-const AdminDashboard = () => {
+const UserDashboard = () => {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const toggleSidebar = () => {
@@ -20,11 +20,11 @@ const AdminDashboard = () => {
 
         {/* Main Content Area */}
         <main className="flex-grow w-full p-4">
-          <h1 className="text-2xl font-bold">Welcome to the Admin Dashboard</h1>
+          <h1 className="text-2xl font-bold">Welcome to the User Dashboard</h1>
         </main>
       </div>
     </div>
   );
 };
 
-export default AdminDashboard;
+export default UserDashboard;

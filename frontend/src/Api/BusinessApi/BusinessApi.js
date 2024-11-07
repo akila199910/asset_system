@@ -76,7 +76,7 @@ export const updateBusinessApi = async (formData) => {
 export const moveToDashboardApi = async (businessId) => {
   try {
     const response = await axios.post(
-      `${API_URL}/business/dashboard`,
+      `${API_URL}/dashboard`,
       { businessId },
       { withCredentials: true }
     );

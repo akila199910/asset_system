@@ -1,8 +1,8 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthenticationRoute from "./Routes/AuthenticationRoutes/AuthenticationRoute";
 import AdminRoutes from "./Routes/AdminRoutes/AdminRoutes";
-import ProfileRoute from "./Routes/ProfileRoutes/ProfileRoute";
+import DashboardRoute from "./Routes/DashboardRoutes/DashboardRoute";
+import UsersRoutes from "./Routes/UsersRoutes/UsersRoutes";
 
 function App() {
   return (
@@ -11,7 +11,8 @@ function App() {
         <Routes>
           <Route path="/" element={<AuthenticationRoute />} />
           <Route path="/admin/*" element={<AdminRoutes />} />
-          <Route path="/users/profile" element={<ProfileRoute />} />
+          <Route path="/dashboard" element={<DashboardRoute />} />
+          <Route path="/users" element={<UsersRoutes />} />
         </Routes>
       </BrowserRouter>
     </div>

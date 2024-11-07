@@ -152,7 +152,7 @@ const Business = () => {
     try {
       const response = await moveToDashboardApi(id);
       if (response?.status === true) {
-        window.location.href = `/admin/dashboard`;
+        window.location.href = `/dashboard`;
       } else if (response?.status === false) {
         console.log(response.message);
       }

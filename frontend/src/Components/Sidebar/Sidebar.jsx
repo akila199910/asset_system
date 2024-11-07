@@ -19,13 +19,13 @@ const Sidebar = ({ isCollapsed }) => {
           </Link>
         </li>
         <li className="mb-2">
-          <Link to="/admin/dashboard" className="flex items-center p-2 hover:bg-gray-300">
+          <Link to="/dashboard" className="flex items-center p-2 hover:bg-gray-300">
             <FaTachometerAlt className="mr-2" />
             {!isCollapsed && <span>Dashboard</span>}
           </Link>
         </li>
         <li className="mb-2">
-          <Link to="#" className="flex items-center p-2 hover:bg-gray-300">
+          <Link to="/users" className="flex items-center p-2 hover:bg-gray-300">
             <FaUsers className="mr-2" />
             {!isCollapsed && <span>Users</span>}
           </Link>
