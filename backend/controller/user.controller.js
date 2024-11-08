@@ -1,9 +1,9 @@
 import userModel from "../models/user.model.js";
-import userProfileModel from "../models/userprofile.model.js";
 import { validateUserCreate } from "../validators/users/users.create.validate.js";
 import mongoose from "mongoose";
 import { validateUserUpdate } from "../validators/users/users.update.validation.js";
 import { generatePassword, hashPassword } from "../utility/password.utility.js";
+import userprofileModel from "../models/userprofile.model.js";
 
 class UserController {
   async createUser(newUser, res) {
@@ -57,51 +57,59 @@ class UserController {
     }
   }
 
-  async getUserById(id) {
+  async getUserById(req, res) {
     try {
-      const user = await userModel.findById(id);
+      const user = await userModel.findById(req.params.id).populate("profile");
       if (!user) {
         throw new Error("User not found");
       }
-      // const password = user.;
-
-      const userProfile = await userProfileModel.findOne({ userId: user._id });
-
-      return { user, userProfile };
+      res.status(200).json({ user: user, status: true });
     } catch (error) {
-      throw new Error("Unable to fetch user.");
+      res.status(400).json({ error: error.message });
     }
   }
 
-  async updateUser(id, updatedUser) {
+  async updateUser(req, res) {
+    const update_user = req.body;
+    let session;
     try {
-      await validateUserUpdate(id, updatedUser);
+      const isValid = await validateUserUpdate(res, update_user);
+      if (!isValid) return;
 
-      const user = await userModel.findByIdAndUpdate(id, updatedUser, {
-        new: true,
+      session = await userModel.startSession();
+      session.startTransaction();
+
+      const user = await userModel.findByIdAndUpdate(
+        update_user._id,
+        {
+          firstName: update_user.firstName,
+          lastName: update_user.lastName,
+          email: update_user.email,
+          contact: update_user.contact,
+          status: update_user.status,
+        },
+        { new: true, session }
+      );
+      if (!user) throw new Error("User not found");
+
+      const userProfile = await userprofileModel.findOneAndUpdate(
+        { userId: update_user._id },
+        { profilePic: update_user.profilePic },
+        { new: true, session }
+      );
+      if (!userProfile) throw new Error("User profile not found");
+
+      await session.commitTransaction();
+      res.status(200).json({
+        message: "User updated successfully",
+        status: true,
       });
-      if (user) {
-        if (updatedUser.profilePic) {
-          const userProfile = await userProfileModel.findOneAndUpdate(
-            { userId: user._id },
-            { profilePic: updatedUser.profilePic },
-            { new: true }
-          );
-
-          return { user, userProfile };
-        } else {
-          return { user };
-        }
-      } else {
-        throw new Error("User not found");
-      }
     } catch (error) {
-      const errorResponse = {
-        message: error.message || "An error occurred",
-        errors: error.errors || {},
-      };
+      if (session) await session.abortTransaction();
 
-      throw errorResponse;
+      res.status(400).json({ error: error.message });
+    } finally {
+      if (session && session.inTransaction()) await session.endSession();
     }
   }
 
@@ -126,18 +134,19 @@ class UserController {
     }
   }
 
-  async getAllUsers() {
+  async getAllUsers(req, res) {
     try {
-      const all_users = await userModel.find().populate("profile");
-
-      return all_users;
+      const users = await userModel.find().populate("profile");
+      res.status(200).json({ users: users, status: true });
     } catch (error) {
-      throw new Error("Unable to fetch users and profiles.");
+      res.status(500).json({
+        message: "An error occurred while fetching businesses",
+        error: error.message,
+      });
     }
   }
   async getUsersByRole(role) {
     try {
-      // Find users with the specified role
       const users = await userModel.find({ role });
 
       // If there are users found, fetch the corresponding user profiles

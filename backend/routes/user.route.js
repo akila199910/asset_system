@@ -5,7 +5,7 @@ import userController from "../controller/user.controller.js";
 
 class UserRoute {
   constructor() {
-    this.router = express.Router(); // Use express.Router(), not new Route()
+    this.router = express.Router();
     this.userRoutes();
   }
 
@@ -15,12 +15,16 @@ class UserRoute {
     //   jsonRequestBodyValidator(userSchema),
     //   this.createUser.bind(this)
     // );
-    // this.router.get("/", this.getAllUsers.bind(this));
-    // this.router.get("/:id", this.getUserById.bind(this));
-    // this.router.put("/:id", this.updateUser.bind(this));
+    this.router.get("/", (req, res) => userController.getAllUsers(req, res));
+    this.router.get("/:id", (req, res) => userController.getUserById(req, res));
+    this.router.put("/", (req, res) => userController.updateUser(req, res));
     // this.router.delete("/:id", this.deleteUser.bind(this));
-    // this.router.get("/role", this.getUsersByRole.bind(this));
-    this.router.get("/profile", (req, res) => userController.getUserProfile(req, res));
+    this.router.get("/role", (req, res) =>
+      userController.getUsersByRole(req, res)
+    );
+    this.router.get("/profile", (req, res) =>
+      userController.getUserProfile(req, res)
+    );
   }
 
   // async createUser(req, res) {

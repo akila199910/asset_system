@@ -92,9 +92,6 @@ class BusinessController {
       const business = await businessModel.findById(req.params.id);
       const owner = await userModel.findById(business.ownerId);
 
-      // if (business) {
-      //   const owner = await userModel.findById(business.ownerId);
-      // }
       res.status(200).json({ business: business, user: owner, status: true });
     } catch (error) {
       res.status(400).json({ error: error.message });
