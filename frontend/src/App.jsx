@@ -6,7 +6,7 @@ import UsersRoutes from "./Routes/UsersRoutes/UsersRoutes";
 
 function App() {
   return (
-    <div className="flex w-full h-screen">
+    <>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AuthenticationRoute />} />
@@ -15,7 +15,7 @@ function App() {
           <Route path="/users" element={<UsersRoutes />} />
         </Routes>
       </BrowserRouter>
-    </div>
+    </>
   );
 }
 
