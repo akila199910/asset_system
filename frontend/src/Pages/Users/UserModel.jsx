@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const UserModel = ({ isOpen, onClose, onSubmit, userData = {} }) => {
+const UserModel = ({  onClose }) => {
   const [formData, setFormData] = useState({
     _id: "",
     firstName: "",
@@ -9,21 +9,22 @@ const UserModel = ({ isOpen, onClose, onSubmit, userData = {} }) => {
     contact: "",
     status: false,
     role: "user",
+    business_id: "",
   });
 
-  useEffect(() => {
-    if (userData) {
-      setFormData({
-        _id: userData._id || "",
-        firstName: userData.firstName || "",
-        lastName: userData.lastName || "",
-        email: userData.email || "",
-        contact: userData.contact || "",
-        status: userData.status || false,
-        role: userData.role || "user",
-      });
-    }
-  }, [userData]);
+  // useEffect(() => {
+  //   if (userData) {
+  //     setFormData({
+  //       _id: userData._id || "",
+  //       firstName: userData.firstName || "",
+  //       lastName: userData.lastName || "",
+  //       email: userData.email || "",
+  //       contact: userData.contact || "",
+  //       status: userData.status || false,
+  //       role: userData.role || "user",
+  //     });
+  //   }
+  // }, [userData]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -35,17 +36,17 @@ const UserModel = ({ isOpen, onClose, onSubmit, userData = {} }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    // onSubmit(formData);
     onClose();
   };
 
-  if (!isOpen) return null;
+  // if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
       <div className="w-full max-w-lg p-6 bg-white rounded-t-lg mx-4 sm:mx-auto max-h-[80vh] overflow-y-auto">
         <h2 className="mb-4 text-xl font-bold text-center">
-          {userData ? "Edit" : "Add"} User
+          {/* {userData ? "Edit" : "Add"} User */}
         </h2>
         <form onSubmit={handleSubmit}>
           {/* Owner Details Section */}

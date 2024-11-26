@@ -1,6 +1,8 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
+const API_URL = process.env.REACT_APP_API_URL;
 
-const BusinessModal = ({ isOpen, onClose, onSubmit, businessData = {} }) => {
+const BusinessModal = ({ onClose, businessData, fetchData }) => {
   const [formData, setFormData] = useState({
     _id: "",
     businessName: "",
@@ -47,13 +49,30 @@ const BusinessModal = ({ isOpen, onClose, onSubmit, businessData = {} }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(formData);
-    onClose();
-  };
+    const url = businessData?._id
+      ? `${API_URL}/business`
+      : `${API_URL}/business`;
+    const method = businessData?._id ? "put" : "post";
 
-  if (!isOpen) return null;
+    try {
+      const response = await axios({
+        method,
+        url,
+        data: formData,
+        withCredentials: true,
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        onClose();
+        fetchData();
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("An error occurred while saving the business. Please try again.");
+    }
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
@@ -130,6 +149,12 @@ const BusinessModal = ({ isOpen, onClose, onSubmit, businessData = {} }) => {
           {/* Owner Details Section */}
           <h3 className="mt-6 mb-2 text-lg font-semibold">Owner Details</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <input
+              type="hidden"
+              name="ownerId"
+              value={formData.ownerId}
+              className="w-full p-2 border rounded"
+            />
             <div>
               <label className="block mb-1">First Name</label>
               <input
