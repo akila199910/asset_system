@@ -11,7 +11,6 @@ import { authenticateToken } from "./middleware/authenticateToken.js";
 dotenv.config();
 const app = express();
 
-// Middleware for CORS
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -19,23 +18,20 @@ app.use(
   })
 );
 
-// Connect to the database
 connectDB();
 
-// Middleware to parse JSON requests
 app.use(express.json());
 
-// Use cookie-parser middleware
 app.use(cookieParser());
 
-// Configure session middleware
-app.use(session({
-  secret: process.env.SESSION_SECRET || "your_secret_key", // Replace with a secure key
-  resave: false, // Don't save session if unmodified
-  saveUninitialized: false, // Don't create session until something stored
-  cookie: { secure: false, httpOnly: true, maxAge: 3600000 } // Configure for production accordingly
-}));
-
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, httpOnly: true, maxAge: 3600000 },
+  })
+);
 
 app.use("/api/v1", mainRouter);
 

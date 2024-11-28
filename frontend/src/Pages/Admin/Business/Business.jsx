@@ -50,7 +50,7 @@ const Business = () => {
       cell: (row) => (
         <div
           className="flex space-x-2 font-bold"
-          // onClick={() => moveToDashboard(row._id)}
+          onClick={() => moveToDashboard(row._id)}
         >
           {row.businessName}{" "}
         </div>
@@ -128,6 +128,11 @@ const Business = () => {
       },
     },
   };
+
+  const moveToDashboard = (id) => {
+    console.log(id);
+    window.location.href = `/dashboard`;
+  }
   const handleAddBusiness = () => {
     setEditBusiness({});
     setIsModalOpen(true);

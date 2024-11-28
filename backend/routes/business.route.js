@@ -25,8 +25,13 @@ class BusinessRoute {
     // this.router.delete("/:id", (req, res) =>
     //   businessController.deleteBusiness(req, res)
     // );
+    this.router.post("/select_business", (req, res) =>
+      businessController.select_business(req, res)
+    );
+
     this.router.post("/dashboard", (req, res) =>
-      businessController.moveToDashboard(req, res));
+      businessController.moveToDashboard(req, res)
+    );
   }
 }
 

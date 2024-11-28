@@ -177,7 +177,11 @@ class BusinessController {
       if (session) session.endSession();
     }
   }
-
+  async select_business(req, res) {
+    const { business_id } = req.body;
+    req.session.business_id = business_id;
+    res.status(200).json({ message: "Business selected", business_id });
+  }
   // async deleteBusiness(req, res) {
   //   try {
   //     const business = await businessModel.findByIdAndDelete(req.params.id);
