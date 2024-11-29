@@ -4,6 +4,8 @@ import logo from "../../img/userprofile.png";
 import { useEffect, useState } from "react";
 import axios from "axios";
 const API_URL = process.env.REACT_APP_API_URL;
+axios.defaults.withCredentials = true;
+
 
 const Navbar = ({ handleSidebar }) => {
   const [businessList, setBusinessList] = useState([]);

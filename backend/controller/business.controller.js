@@ -180,6 +180,8 @@ class BusinessController {
   async select_business(req, res) {
     const { business_id } = req.body;
     req.session.business_id = business_id;
+    await req.session.save();
+    console.log(req.session);
     res.status(200).json({ message: "Business selected", business_id });
   }
   // async deleteBusiness(req, res) {

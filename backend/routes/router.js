@@ -3,7 +3,9 @@ import userRoute from "./user.route.js";
 import businessRoute from "./business.route.js";
 import authenticateRoutes from "./authentication.route.js";
 import dashboardRoute from "./dashboard.route.js";
+import assetCategoryRoutes from "./assetsCategory.route.js";
 import { authenticateToken } from "../middleware/authenticateToken.js";
+
 
 class MainRouter {
   constructor() {
@@ -12,6 +14,7 @@ class MainRouter {
     this.businessMainRoutes();
     this.authenticateRoutes();
     this.dashboardMainRoutes();
+    this.assetsCategoryMainRoutes();
   }
 
   dashboardMainRoutes() {
@@ -30,6 +33,9 @@ class MainRouter {
   // Set up authentication routes
   authenticateRoutes() {
     this.router.use("/auth", authenticateRoutes);
+  }
+  assetsCategoryMainRoutes() {
+    this.router.use("/assets_category", assetCategoryRoutes);
   }
 }
 

@@ -10,18 +10,6 @@ import { authenticateToken } from "./middleware/authenticateToken.js";
 
 dotenv.config();
 const app = express();
-
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
-
-connectDB();
-
-app.use(express.json());
-
 app.use(cookieParser());
 
 app.use(
@@ -32,6 +20,16 @@ app.use(
     cookie: { secure: false, httpOnly: true, maxAge: 3600000 },
   })
 );
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
+connectDB();
+
+app.use(express.json());
 
 app.use("/api/v1", mainRouter);
 
