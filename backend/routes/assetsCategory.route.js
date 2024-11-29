@@ -14,12 +14,12 @@ class AssetCategoryRoute {
     this.router.post("/", (req, res) =>
       assetCategoryController.createAssetCategory(req, res)
     );
-    // this.router.get("/:id", (req, res) =>
-    //   assetCategoryController.getBusinessById(req, res)
-    // );
-    // this.router.put("/", (req, res) =>
-    //   assetCategoryController.updateBusiness(req, res)
-    // );
+    this.router.get("/:id", (req, res) =>
+      assetCategoryController.getAssetCategoryById(req, res)
+    );
+    this.router.put("/", (req, res) =>
+      assetCategoryController.updateAssetCategory(req, res)
+    );
     // this.router.delete("/:id", (req, res) =>
     //   assetCategoryController.deleteBusiness(req, res)
     // );
