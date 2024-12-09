@@ -10,11 +10,7 @@ class UserRoute {
   }
 
   userRoutes() {
-    // this.router.post(
-    //   "/",
-    //   jsonRequestBodyValidator(userSchema),
-    //   this.createUser.bind(this)
-    // );
+    this.router.post("/", (req, res) => userController.createUser(req, res));
     this.router.get("/", (req, res) => userController.getAllUsers(req, res));
     this.router.get("/:id", (req, res) => userController.getUserById(req, res));
     this.router.put("/", (req, res) => userController.updateUser(req, res));

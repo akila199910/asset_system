@@ -1,6 +1,8 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
+const API_URL = process.env.REACT_APP_API_URL;
 
-const UserModel = ({  onClose }) => {
+const UserModel = ({ onClose, userData, fetchData }) => {
   const [formData, setFormData] = useState({
     _id: "",
     firstName: "",
@@ -12,19 +14,19 @@ const UserModel = ({  onClose }) => {
     business_id: "",
   });
 
-  // useEffect(() => {
-  //   if (userData) {
-  //     setFormData({
-  //       _id: userData._id || "",
-  //       firstName: userData.firstName || "",
-  //       lastName: userData.lastName || "",
-  //       email: userData.email || "",
-  //       contact: userData.contact || "",
-  //       status: userData.status || false,
-  //       role: userData.role || "user",
-  //     });
-  //   }
-  // }, [userData]);
+  useEffect(() => {
+    if (userData) {
+      setFormData({
+        _id: userData._id || "",
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+        email: userData.email || "",
+        contact: userData.contact || "",
+        status: userData.status || false,
+        role: userData.role || "user",
+      });
+    }
+  }, [userData]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -34,10 +36,28 @@ const UserModel = ({  onClose }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // onSubmit(formData);
-    onClose();
+    const url = userData?._id ? `${API_URL}/users` : `${API_URL}/users`;
+    const method = userData?._id ? "put" : "post";
+    try {
+      // alert("submit form")
+      const response = await axios({
+        method,
+        url,
+        data: formData,
+        withCredentials: true,
+      });
+      // console.log(response);
+
+      if (response.status === 200 || response.status === 201) {
+        onClose();
+        fetchData();
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("An error occurred while saving the user. Please try again.");
+    }
   };
 
   // if (!isOpen) return null;
@@ -46,20 +66,20 @@ const UserModel = ({  onClose }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
       <div className="w-full max-w-lg p-6 bg-white rounded-t-lg mx-4 sm:mx-auto max-h-[80vh] overflow-y-auto">
         <h2 className="mb-4 text-xl font-bold text-center">
-          {/* {userData ? "Edit" : "Add"} User */}
+          {userData ? "Edit" : "Add"} User
         </h2>
         <form onSubmit={handleSubmit}>
           {/* Owner Details Section */}
           <h3 className="mt-6 mb-2 text-lg font-semibold">User Details</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <input
-                type="hidden"
-                name="_id"
-                value={formData._id}
-                onChange={handleChange}
-                required
-                className="w-full p-2 border rounded"
-              />
+            <input
+              type="hidden"
+              name="_id"
+              value={formData._id}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border rounded"
+            />
             <div>
               <label className="block mb-1">First Name</label>
               <input

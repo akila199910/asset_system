@@ -49,8 +49,7 @@ export const validateUserCreate = async (res, new_user) => {
   }
 
   if (Object.keys(errors).length > 0) {
-    res.status(400).json({ errors });
-    return false;
+    throw { status: 400, errors, message: "Validation failed" };
   }
 
   return true;

@@ -39,6 +39,17 @@ const navLinks = [
   },
   {
     id: 6,
+    title: "Assets Categories",
+    icon: <FaComputer className="inline-block w-6 h-6 mr-2 -mt-2" />,
+    path: "/employees",
+  },{
+    id: 10,
+    title: "Assets Sub Categories",
+    icon: <FaComputer className="inline-block w-6 h-6 mr-2 -mt-2" />,
+    path: "/employees",
+  },
+  {
+    id: 11,
     title: "Assets",
     icon: <FaComputer className="inline-block w-6 h-6 mr-2 -mt-2" />,
     path: "/employees",

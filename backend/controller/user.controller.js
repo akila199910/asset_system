@@ -1,59 +1,65 @@
 import userModel from "../models/user.model.js";
+import userProfileModel from "../models/userprofile.model.js";
 import { validateUserCreate } from "../validators/users/users.create.validate.js";
-import mongoose from "mongoose";
 import { validateUserUpdate } from "../validators/users/users.update.validation.js";
 import { generatePassword, hashPassword } from "../utility/password.utility.js";
-import userprofileModel from "../models/userprofile.model.js";
 
 class UserController {
-  async createUser(newUser, res) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    let transactionCommitted = false;
+  async createUser(req, res) {
+    const new_user = req.body;
+    const business_id = req.session.business_id;
+    let session = null;
 
     try {
-      await validateUserCreate(newUser);
+      const isValid = await validateUserCreate(res, new_user);
 
+      if (!isValid) return;
+
+      session = await userModel.startSession();
+      session.startTransaction();
       const password = generatePassword();
       const hashedPassword = hashPassword(password);
 
       const user = new userModel({
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        contact: newUser.contact,
-        email: newUser.email,
+        firstName: new_user.firstName,
+        lastName: new_user.lastName,
+        contact: new_user.contact,
+        email: new_user.email,
+        role: new_user.role || "business_user",
+        status: new_user.owner_status,
         password: hashedPassword,
-        role: newUser.role,
-        status: newUser.status,
+        business_id: business_id,
       });
       await user.save({ session });
 
       const userProfile = new userProfileModel({
         userId: user._id,
-        profilePic: newUser.profilePic || "userprofile.png",
+        profilePic: new_user.profilePic || "userprofile.png",
       });
       await userProfile.save({ session });
 
       await session.commitTransaction();
-      transactionCommitted = true;
-
-      return res
-        .status(201)
-        .json({ user, userProfile, message: "User created successfully" });
+      res.status(201).json({
+        message: "User created successfully.",
+        user: user,
+        profile: userProfile,
+        status: true,
+      });
     } catch (error) {
-      if (!transactionCommitted) {
+      if (session) {
         await session.abortTransaction();
       }
 
-      const errorResponse = {
-        message: error.message || "An error occurred",
-        errors: error.errors || {},
-      };
       const status = error.status || 500;
-
-      return res.status(status).json(errorResponse);
+      res.status(status).json({
+        message: error.message || "Internal Server Error",
+        errors: error.errors || {},
+        status: false,
+      });
     } finally {
-      session.endSession();
+      if (session) {
+        await session.endSession();
+      }
     }
   }
 
@@ -92,7 +98,7 @@ class UserController {
       );
       if (!user) throw new Error("User not found");
 
-      const userProfile = await userprofileModel.findOneAndUpdate(
+      const userProfile = await userProfileModel.findOneAndUpdate(
         { userId: update_user._id },
         { profilePic: update_user.profilePic },
         { new: true, session }
@@ -135,12 +141,17 @@ class UserController {
   }
 
   async getAllUsers(req, res) {
+    const business_id = req.session.business_id;
+    console.log(business_id);
     try {
-      const users = await userModel.find().populate("profile");
+      const users = await userModel
+        .find({ business_id: business_id })
+        .populate("profile");
+
       res.status(200).json({ users: users, status: true });
     } catch (error) {
       res.status(500).json({
-        message: "An error occurred while fetching businesses",
+        message: "An error occurred while fetching users",
         error: error.message,
       });
     }
@@ -152,11 +163,11 @@ class UserController {
       // If there are users found, fetch the corresponding user profiles
       const usersWithProfiles = await Promise.all(
         users.map(async (user) => {
-          const userProfile = await userProfileModel.findOne({
+          const userProfile = await userprofileModel.findOne({
             userId: user._id,
           });
           return {
-            ...user.toObject(), // Convert the user to an object
+            ...user.toObject(),
             profile: userProfile || {}, // Attach the profile or an empty object if no profile found
           };
         })

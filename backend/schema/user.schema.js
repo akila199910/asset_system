@@ -1,3 +1,5 @@
+import { type } from "os";
+
 const userSchema = {
   type: "object",
   properties: {
@@ -37,7 +39,17 @@ const userSchema = {
     profilePic: {
       type: "string",
     },
+    business_id: {
+      type: "string",
+    },
   },
-  required: ["firstName", "lastName", "contact", "email", "role"],
+  required: [
+    "firstName",
+    "lastName",
+    "contact",
+    "email",
+    "role",
+    "business_id",
+  ],
 };
 export default userSchema;

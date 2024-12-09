@@ -22,7 +22,7 @@ class MainRouter {
   }
   // Set up user routes with authentication
   usersMainRoutes() {
-    this.router.use("/users", authenticateToken, userRoute);
+    this.router.use("/users", userRoute);
   }
 
   // Set up business routes (authentication can be added if needed)

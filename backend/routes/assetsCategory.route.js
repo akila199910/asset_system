@@ -21,7 +21,7 @@ class AssetCategoryRoute {
       assetCategoryController.updateAssetCategory(req, res)
     );
     // this.router.delete("/:id", (req, res) =>
-    //   assetCategoryController.deleteBusiness(req, res)
+    //   assetCategoryController.deleteAssetCategory(req, res)
     // );
     // this.router.post("/select_business", (req, res) =>
     //   assetCategoryController.select_business(req, res)

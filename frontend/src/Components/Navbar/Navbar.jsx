@@ -6,22 +6,20 @@ import axios from "axios";
 const API_URL = process.env.REACT_APP_API_URL;
 axios.defaults.withCredentials = true;
 
-
 const Navbar = ({ handleSidebar }) => {
   const [businessList, setBusinessList] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
-
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/business`, {
+        withCredentials: true,
+      });
+      setBusinessList(response.data.businesses || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/business`, {
-          withCredentials: true,
-        });
-        setBusinessList(response.data.businesses || []);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
     fetchData();
   }, []);
   const handleBusinessSelect = async (event) => {
@@ -33,6 +31,7 @@ const Navbar = ({ handleSidebar }) => {
         { business_id },
         { withCredentials: true }
       );
+      window.location.reload();
       console.log("Business selected:", response.data);
       setSelectedBusiness(business_id);
     } catch (error) {

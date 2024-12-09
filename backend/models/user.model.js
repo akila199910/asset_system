@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const userModel = new mongoose.Schema({
   firstName: {
@@ -40,6 +41,10 @@ const userModel = new mongoose.Schema({
     type: String,
     enum: ["super_admin", "admin", "business_user", "user", "guest"],
     default: "guest",
+  },
+  business_id: {
+    type: String,
+    default: 1,
   },
 });
 

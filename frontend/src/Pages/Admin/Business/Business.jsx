@@ -129,10 +129,14 @@ const Business = () => {
     },
   };
 
-  const moveToDashboard = (id) => {
-    console.log(id);
+  const moveToDashboard = async(business_id) => {
+    await axios.post(
+      `${API_URL}/business/select_business`,
+      { business_id },
+      { withCredentials: true }
+    );
     window.location.href = `/dashboard`;
-  }
+  };
   const handleAddBusiness = () => {
     setEditBusiness({});
     setIsModalOpen(true);
