@@ -29,7 +29,7 @@ const navLinks = [
     id: 4,
     title: "Employees",
     icon: <FaUsersSlash className="inline-block w-6 h-6 mr-2 -mt-2" />,
-    path: "/employees",
+    path: "/employee",
   },
   {
     id: 5,

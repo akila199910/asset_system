@@ -3,6 +3,7 @@ import AuthenticationRoute from "./Routes/AuthenticationRoutes/AuthenticationRou
 import AdminRoutes from "./Routes/AdminRoutes/AdminRoutes";
 import DashboardRoute from "./Routes/DashboardRoutes/DashboardRoute";
 import UsersRoutes from "./Routes/UsersRoutes/UsersRoutes";
+import EmployeeRoutes from "./Routes/EmployeeRoutes/EmployeeRoutes";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/admin/*" element={<AdminRoutes />} />
           <Route path="/dashboard" element={<DashboardRoute />} />
           <Route path="/users" element={<UsersRoutes />} />
+          <Route path="/employee" element={<EmployeeRoutes />} />
         </Routes>
       </BrowserRouter>
     </>
