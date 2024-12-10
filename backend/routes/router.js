@@ -4,7 +4,8 @@ import businessRoute from "./business.route.js";
 import authenticateRoutes from "./authentication.route.js";
 import dashboardRoute from "./dashboard.route.js";
 import assetCategoryRoutes from "./assetsCategory.route.js";
-import employeeMainRoutes from "./employee.route.js"
+import employeeRoutes from "./employee.route.js";
+import departmentRoutes from "./department.route.js";
 import { authenticateToken } from "../middleware/authenticateToken.js";
 
 class MainRouter {
@@ -15,34 +16,34 @@ class MainRouter {
     this.authenticateRoutes();
     this.dashboardMainRoutes();
     this.employeeMainRoutes();
+    this.departmentMainRoutes();
     this.assetsCategoryMainRoutes();
   }
 
   dashboardMainRoutes() {
     this.router.use("/dashboard", dashboardRoute);
   }
-  // Set up user routes with authentication
   usersMainRoutes() {
     this.router.use("/users", userRoute);
   }
 
-  // Set up business routes (authentication can be added if needed)
   businessMainRoutes() {
     this.router.use("/business", businessRoute);
   }
 
-  // Set up authentication routes
   authenticateRoutes() {
     this.router.use("/auth", authenticateRoutes);
   }
   employeeMainRoutes() {
-    this.router.use("/employee", employeeMainRoutes);
+    this.router.use("/employee", employeeRoutes);
+  }
+  departmentMainRoutes() {
+    this.router.use("/department", departmentRoutes);
   }
   assetsCategoryMainRoutes() {
     this.router.use("/assets_category", assetCategoryRoutes);
   }
 }
 
-// Export an instance of MainRouter
 const mainRouter = new MainRouter();
 export default mainRouter.router;

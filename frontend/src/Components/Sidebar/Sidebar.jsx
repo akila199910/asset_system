@@ -35,7 +35,7 @@ const navLinks = [
     id: 5,
     title: "Departments",
     icon: <RiLuggageDepositFill className="inline-block w-6 h-6 mr-2 -mt-2" />,
-    path: "/departments",
+    path: "/department",
   },
   {
     id: 6,

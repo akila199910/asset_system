@@ -31,4 +31,4 @@ class EmployeeRoute {
 }
 
 const employeeRoute = new EmployeeRoute();
-export default employeeRoute.router; // Export the router directly
+export default employeeRoute.router; 
