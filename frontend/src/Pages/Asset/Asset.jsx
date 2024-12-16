@@ -7,20 +7,65 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const Asset = () => {
   const [data, setData] = useState([]);
+  const [assetCategories, setAssetCategories] = useState([]);
+  const [assetSubCategories, setAssetSubCategories] = useState([]);
   const [assetModel, setAssetModel] = useState(false);
   const [editAsset, setEditAsset] = useState({
     _id: "",
     name: "",
     status: false,
     business_id: "",
+    asset_category_id: "",
+    asset_sub_category_id: "",
+    asset_no: "",
+    serial_no: "",
+    purchased_date: "",
+    warranty: "true",
+    description: "",
   });
 
   const columns = [
     {
-      name: "Name",
+      name: "Asset Name",
       selector: (row) => row.name,
       sortable: false,
     },
+    {
+      name: "Asset Category Name",
+      selector: (row) => row.asset_category_id.name,
+      sortable: false,
+    },
+    {
+      name: "Asset Sub Category Name",
+      selector: (row) => row.asset_sub_category_id.name,
+      sortable: false,
+    },
+    {
+      name: "Asset No",
+      selector: (row) => row.asset_no,
+      sortable: false,
+    },
+    {
+      name: "Purchased Date",
+      selector: (row) => row.purchased_date,
+      sortable: false,
+    },
+    {
+      name: "Serial No",
+      selector: (row) => row.serial_no,
+      sortable: false,
+    },
+    {
+      name: "Warranty",
+      selector: (row) => row.warranty,
+      sortable: false,
+    },
+    {
+      name: " Description",
+      selector: (row) => row.description,
+      sortable: false,
+    },
+
     {
       name: "Status",
       selector: (row) => <div>{row.status ? "Active" : "Inactive"}</div>,
@@ -74,15 +119,17 @@ const Asset = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${API_URL}/assets_category`, {
+      const response = await axios.get(`${API_URL}/assets`, {
         withCredentials: true,
       });
-      setData(response.data.assetCategory || []);
+      setData(response.data.asset || []);
+      setAssetCategories(response.data.assetCategories || []);
+      setAssetSubCategories(response.data.assetSubCategories || []);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  const addDepartment = () => {
+  const addAsset = () => {
     setEditAsset({});
     setAssetModel(true);
   };
@@ -93,18 +140,22 @@ const Asset = () => {
 
   const handleEdit = async (row) => {
     try {
-      const response = await axios.get(
-        `${API_URL}/assets_category/${row._id}`,
-        {
-          withCredentials: true,
-        }
-      );
-      const assetCategoryData = response.data.assetCategory;
+      const response = await axios.get(`${API_URL}/assets/${row._id}`, {
+        withCredentials: true,
+      });
+      const assetData = response.data.asset;
       setEditAsset({
-        _id: assetCategoryData._id,
-        name: assetCategoryData.name,
-        status: assetCategoryData.status,
-        business_id: assetCategoryData.business_id,
+        _id: assetData._id,
+        name: assetData.name,
+        status: assetData.status,
+        business_id: assetData.business_id,
+        asset_category_id: assetData.asset_category_id,
+        asset_sub_category_id: assetData.asset_sub_category_id,
+        asset_no: assetData.asset_no,
+        serial_no: assetData.serial_no,
+        purchased_date: assetData.purchased_date,
+        warranty: assetData.warranty,
+        description: assetData.description,
       });
 
       setAssetModel(true);
@@ -118,12 +169,12 @@ const Asset = () => {
       <div className="relative bg-white rounded-md shadow-md">
         {/* Header section with fixed background */}
         <div className="sticky top-0 z-10 flex items-center justify-between bg-white">
-          <h2 className="p-4 text-lg font-bold text-gray-800">Departments</h2>
+          <h2 className="p-4 text-lg font-bold text-gray-800">Assets</h2>
           <button
             className="px-4 py-2 mr-4 text-white bg-blue-500 rounded"
-            onClick={addDepartment}
+            onClick={addAsset}
           >
-            Add department
+            Add Asset
           </button>
         </div>
 
@@ -141,6 +192,8 @@ const Asset = () => {
             onClose={() => setAssetModel(false)}
             assetData={editAsset}
             fetchData={fetchData}
+            assetCategories={assetCategories}
+            assetSubCategories={assetSubCategories}
           />
         )}
       </div>

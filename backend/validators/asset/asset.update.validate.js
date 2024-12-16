@@ -1,15 +1,29 @@
-import assetcategoriesModel from "../../models/assetcategories.model.js";
+import assetModel from "../../models/asset.model.js";
 
-export const assetCategoryUpdateValidate = async (update_assetCategory) => {
+export const assetUpdateValidate = async (res, new_asset) => {
   const errors = {};
-  const validation = {
-    name: { required: true, min: 3, max: 30, message: "Asset category name" },
-    status: { required: false, message: "Status" },
-    business_id: { required: true, message: "Business ID" },
-  };
 
+  const validation = {
+    name: { required: true, min: 3, max: 30, message: "Asset name" },
+    status: { required: false, message: "Status" },
+    asset_category_id: { required: true, message: "Asset category" },
+    asset_sub_category_id: { required: true, message: "Asset sub-category" },
+    business_id: { required: true, message: "Business ID" },
+    asset_no: { required: true, message: "Asset number" },
+    serial_no: { required: true, message: "Serial number" },
+  };
+  if (new_asset.serial_no && !/^[A-Z0-9-]+$/.test(new_asset.serial_no)) {
+    errors.serial_no =
+      "Serial number must only contain uppercase letters, numbers, or dashes";
+  }
+  if (new_asset.asset_no && !/^[A-Z0-9-]+$/.test(new_asset.asset_no)) {
+    errors.asset_no =
+      "Asset number must only contain uppercase letters, numbers, or dashes";
+  }
+
+  // Field validation
   for (const [field, rules] of Object.entries(validation)) {
-    const value = update_assetCategory[field];
+    const value = new_asset[field];
 
     if (rules.required && !value) {
       errors[field] = `${rules.message} is required`;
@@ -21,6 +35,7 @@ export const assetCategoryUpdateValidate = async (update_assetCategory) => {
         field
       ] = `${rules.message} must be at least ${rules.min} characters`;
     }
+
     if (value && rules.max && value.length > rules.max) {
       errors[
         field
@@ -28,15 +43,30 @@ export const assetCategoryUpdateValidate = async (update_assetCategory) => {
     }
   }
 
-  if (update_assetCategory.name) {
-    const isNameExist = await assetcategoriesModel.findOne({
-      name: update_assetCategory.name,
-      business_id: update_assetCategory.business_id,
-      _id: { $ne: update_assetCategory._id },
+  // Unique name check within business_id
+  if (new_asset.name && new_asset.business_id && new_asset.serial_no) {
+    const isNameExist = await assetModel.findOne({
+      name: new_asset.name,
+      business_id: new_asset.business_id,
+      serial_no: new_asset.serial_no,
+      _id: { $ne: new_asset._id },
     });
 
     if (isNameExist) {
-      errors.name = `An asset category with the name '${update_assetCategory.name}' already exists for this business.`;
+      errors.name =
+        "An asset with this name already exists for the given business.";
+    }
+  }
+
+  // Unique serial number check
+  if (new_asset.serial_no) {
+    const isSerialNoExist = await assetModel.findOne({
+      serial_no: new_asset.serial_no,
+      _id: { $ne: new_asset._id },
+    });
+
+    if (isSerialNoExist) {
+      errors.serial_no = "An asset with this serial number already exists.";
     }
   }
 

@@ -25,7 +25,7 @@ function App() {
             path="/asset_sub_category"
             element={<AssetSubCategoryRoutes />}
           />
-          <Route path="/asset" element={<AssetRoutes />} />
+          <Route path="/assets" element={<AssetRoutes />} />
 
         </Routes>
       </BrowserRouter>
