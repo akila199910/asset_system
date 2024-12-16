@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const assetSubCategoryModel = new mongoose.Schema(
   {
     name: {
@@ -11,11 +12,6 @@ const assetSubCategoryModel = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    asset_category_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "AssetCategories",
-      required: true,
-    },
     business_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Businesses",
@@ -25,9 +21,6 @@ const assetSubCategoryModel = new mongoose.Schema(
   { timestamps: true }
 );
 
-assetSubCategoryModel.index(
-  { business_id: 1, asset_category_id: 1, name: 1 },
-  { unique: true }
-);
+assetSubCategoryModel.index({ business_id: 1, name: 1 }, { unique: true });
 
 export default mongoose.model("AssetSubCategories", assetSubCategoryModel);

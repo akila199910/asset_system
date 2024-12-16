@@ -1,4 +1,3 @@
-import React from "react";
 import { FaTachometerAlt, FaUsers, FaExchangeAlt } from "react-icons/fa";
 import { IoHome } from "react-icons/io5";
 import { FaUsersSlash, FaComputer } from "react-icons/fa6";
@@ -41,18 +40,18 @@ const navLinks = [
     id: 6,
     title: "Assets Categories",
     icon: <FaComputer className="inline-block w-6 h-6 mr-2 -mt-2" />,
-    path: "/employees",
+    path: "/asset_category",
   },{
     id: 10,
     title: "Assets Sub Categories",
     icon: <FaComputer className="inline-block w-6 h-6 mr-2 -mt-2" />,
-    path: "/employees",
+    path: "/asset_sub_category",
   },
   {
     id: 11,
     title: "Assets",
     icon: <FaComputer className="inline-block w-6 h-6 mr-2 -mt-2" />,
-    path: "/employees",
+    path: "/assets",
   },
   {
     id: 7,
