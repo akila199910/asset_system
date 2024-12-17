@@ -1,6 +1,7 @@
 import businessModel from "../models/business.model.js";
 import userModel from "../models/user.model.js";
 import userprofileModel from "../models/userprofile.model.js";
+import { generatePassword, hashPassword } from "../utility/password.utility.js";
 import { validateBusinessCreate } from "../validators/business/business.create.validate.js";
 import { validateBusinessUpdate } from "../validators/business/business.update.validate.js";
 
@@ -8,7 +9,7 @@ class BusinessController {
   async getAllBusiness(req, res) {
     try {
       const business = await businessModel.find();
-      res.json(business);
+      res.status(200).json({ businesses: business, status: true });
     } catch (error) {
       res.status(500).json({
         message: "An error occurred while fetching businesses",
@@ -32,13 +33,16 @@ class BusinessController {
       session = await userModel.startSession();
       session.startTransaction();
 
+      const password = generatePassword();
+      const hashedPassword = hashPassword(password);
       const user = new userModel({
         firstName: new_registered_business.firstName,
         lastName: new_registered_business.lastName,
         contact: new_registered_business.contact,
         email: new_registered_business.email,
-        role: new_registered_business.role,
+        role: new_registered_business.role || "business_user",
         status: new_registered_business.owner_status,
+        password: hashedPassword,
       });
       await user.save({ session });
 
@@ -71,9 +75,11 @@ class BusinessController {
         await session.abortTransaction();
       }
 
-      const status = error.statuscode || 500;
+      const status = error.status || 500;
       res.status(status).json({
         message: error.message || "Internal Server Error",
+        errors: error.errors || {},
+        status: false,
       });
     } finally {
       if (session) {
@@ -84,9 +90,15 @@ class BusinessController {
   async getBusinessById(req, res) {
     try {
       const business = await businessModel.findById(req.params.id);
-      res.status(200).json(business);
+      const owner = await userModel.findById(business.ownerId);
+      const businessWithOwner = {
+        ...business.toObject(),
+        owner: owner.toObject(),
+      };
+
+      res.status(200).json({ data: businessWithOwner, status: true });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      res.status(400).json({ error: error.message, status: false });
     }
   }
 
@@ -97,7 +109,6 @@ class BusinessController {
     try {
       const isValid = await validateBusinessUpdate(res, update_business);
       if (!isValid) return;
-
       session = await userModel.startSession();
       session.startTransaction();
 
@@ -112,17 +123,23 @@ class BusinessController {
         },
         { new: true, session }
       );
-      if (!user) throw new Error("User not found");
+      if (!user)
+        throw new Error(`User with ID ${update_business.ownerId} not found`);
 
+      // Update the user profile
       const userProfile = await userprofileModel.findOneAndUpdate(
         { userId: update_business.ownerId },
         { profilePic: update_business.profilePic },
         { new: true, session }
       );
-      if (!userProfile) throw new Error("User profile not found");
+      if (!userProfile)
+        throw new Error(
+          `User profile for userId ${update_business.ownerId} not found`
+        );
 
+      // Update the business
       const business = await businessModel.findByIdAndUpdate(
-        update_business.businessId,
+        update_business._id,
         {
           businessName: update_business.businessName,
           businessEmail: update_business.businessEmail,
@@ -132,24 +149,50 @@ class BusinessController {
         },
         { new: true, session }
       );
-      if (!business) throw new Error("Business not found");
+      if (!business)
+        throw new Error(`Business with ID ${update_business._id} not found`);
 
+      // Commit the transaction
       await session.commitTransaction();
+
+      // Send success response
       res.status(200).json({
         message: "Business updated successfully",
         user,
         userProfile,
         business,
+        status: true,
       });
     } catch (error) {
+      // Abort the transaction on error
       if (session) await session.abortTransaction();
-      session.endSession();
 
+      // Log the error
+      console.error("Error updating business:", error);
+
+      // Send error response
       res.status(400).json({ error: error.message });
     } finally {
+      // Ensure the session is always ended
       if (session) session.endSession();
     }
   }
+  async select_business(req, res) {
+    const { business_id } = req.body;
+    req.session.business_id = business_id;
+    await req.session.save();
+    console.log(req.session);
+    res.status(200).json({ message: "Business selected", business_id });
+  }
+  // async deleteBusiness(req, res) {
+  //   try {
+  //     const business = await businessModel.findByIdAndDelete(req.params.id);
+  //     const owner = await userModel.findByIdAndDelete(business.ownerId);
+  //     res.status(200).json({ business: business, user: owner, status: true });
+  //   } catch (error) {
+  //     res.status(400).json({ error: error.message });
+  //   }
+  // }
 }
 
 const businessController = new BusinessController();

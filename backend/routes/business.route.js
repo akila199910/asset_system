@@ -10,10 +10,28 @@ class BusinessRoute {
   }
 
   businessRoutes() {
-    this.router.get("/", (req, res) => businessController.getAllBusiness(req, res));
-    this.router.post("/",jsonRequestBodyValidator(businessSchema),(req,res)=> businessController.createBusiness(req,res));
-    this.router.get("/:id", (req, res) => businessController.getBusinessById(req, res));
-    this.router.put("/:id", (req, res) => businessController.updateBusiness(req, res))
+    this.router.get("/", (req, res) =>
+      businessController.getAllBusiness(req, res)
+    );
+    this.router.post("/", (req, res) =>
+      businessController.createBusiness(req, res)
+    );
+    this.router.get("/:id", (req, res) =>
+      businessController.getBusinessById(req, res)
+    );
+    this.router.put("/", (req, res) =>
+      businessController.updateBusiness(req, res)
+    );
+    // this.router.delete("/:id", (req, res) =>
+    //   businessController.deleteBusiness(req, res)
+    // );
+    this.router.post("/select_business", (req, res) =>
+      businessController.select_business(req, res)
+    );
+
+    this.router.post("/dashboard", (req, res) =>
+      businessController.moveToDashboard(req, res)
+    );
   }
 }
 

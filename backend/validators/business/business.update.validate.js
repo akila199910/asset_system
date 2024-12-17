@@ -5,12 +5,12 @@ export const validateBusinessUpdate = async (res, update_business) => {
   const errors = {};
 
   const validation = {
-    businessId: { required: true, message: "Business id" },
+    _id: { required: true, message: "Business id" },
     businessName: { required: true, min: 3, max: 30, message: "Business name" },
     businessEmail: { required: true, message: "Business email" },
     address: { required: true, min: 5, max: 30, message: "Address" },
     city: { required: true, min: 5, max: 30, message: "City" },
-    business_status: { required: true, message: "Business status" },
+    business_status: { required: false, message: "Business status" },
     ownerId: { required: true, message: "Owner id" },
     firstName: { required: true, min: 3, max: 30, message: "First name" },
     lastName: { required: true, min: 3, max: 30, message: "Last name" },
@@ -18,7 +18,7 @@ export const validateBusinessUpdate = async (res, update_business) => {
     contact: { required: true, message: "Contact number" },
     password: { required: false, min: 8, message: "Password" },
     role: { required: true, message: "Role" },
-    owner_status: { required: true, message: "Owner status" },
+    owner_status: { required: false, message: "Owner status" },
   };
 
   for (const [field, rules] of Object.entries(validation)) {
@@ -64,7 +64,7 @@ export const validateBusinessUpdate = async (res, update_business) => {
   if (update_business.businessEmail) {
     const isBusinessEmailExist = await businessModel.findOne({
       businessEmail: update_business.businessEmail,
-      _id: { $ne: update_business.businessId },
+      _id: { $ne: update_business._id },
     });
     if (isBusinessEmailExist) {
       errors.businessEmail = "Business already exists with this email address";
@@ -73,7 +73,7 @@ export const validateBusinessUpdate = async (res, update_business) => {
   if (update_business.businessName) {
     const isBusinessNameExist = await businessModel.findOne({
       businessName: update_business.businessName,
-      _id: { $ne: update_business.businessId },
+      _id: { $ne: update_business._id },
     });
     if (isBusinessNameExist) {
       errors.businessName = "Business name already taken";

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const userModel = new mongoose.Schema({
   firstName: {
@@ -41,14 +42,20 @@ const userModel = new mongoose.Schema({
     enum: ["super_admin", "admin", "business_user", "user", "guest"],
     default: "guest",
   },
+  business_id: {
+    type: String,
+    default: 1,
+  },
 });
 
 userModel.virtual("profile", {
   ref: "UserProfiles",
   localField: "_id",
   foreignField: "userId",
+  justOne: true,
 });
 
+userModel.set("toObject", { virtuals: true });
 userModel.set("toJSON", { virtuals: true });
 
 export default mongoose.model("Users", userModel);

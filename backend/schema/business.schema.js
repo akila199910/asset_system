@@ -1,17 +1,20 @@
 const businessSchema = {
   type: "object",
   properties: {
+    _id: {
+      type: "string",
+    },
     firstName: {
       type: "string",
       minLength: 3,
       maxLength: 30,
-      pattern: "^[a-zA-Z]+$", //only letters
+      // pattern: "^[a-zA-Z]+$",
     },
     lastName: {
       type: "string",
       minLength: 3,
       maxLength: 30,
-      pattern: "^[a-zA-Z]+$", //only letters
+      // pattern: "^[a-zA-Z]+$",
     },
     contact: {
       type: "string",
@@ -41,7 +44,7 @@ const businessSchema = {
       type: "string",
       minLength: 3,
       maxLength: 30,
-      pattern: "^[a-zA-Z]+$", //only letters
+      // pattern: "^[a-zA-Z]+$",
     },
     businessEmail: {
       type: "string",
@@ -58,14 +61,14 @@ const businessSchema = {
       type: "string",
       minLength: 5,
       maxLength: 30,
-      pattern: "^[a-zA-Z]+$", //only letters
+      // pattern: "^[a-zA-Z]+$",
     },
     status: {
       type: "boolean",
       enum: [true, false],
       default: true,
     },
-    
+
     businessLogo: {
       type: "string",
     },
