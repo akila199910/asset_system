@@ -125,6 +125,7 @@ const Employee = () => {
         contact: employeeData.contact,
         role: employeeData.role,
         business_id: employeeData.business_id,
+        status: employeeData.status,
       });
 
       setEmployeeModel(true);

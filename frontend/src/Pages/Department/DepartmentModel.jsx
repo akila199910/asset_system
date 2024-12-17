@@ -6,7 +6,6 @@ const DepartmentModel = ({ onClose, departmentData, fetchData }) => {
   const [formData, setFormData] = useState({
     _id: "",
     name: "",
-
     status: false,
     business_id: "",
   });
@@ -17,6 +16,7 @@ const DepartmentModel = ({ onClose, departmentData, fetchData }) => {
         _id: departmentData._id || "",
         name: departmentData.name || "",
         status: departmentData.status || false,
+        business_id: departmentData.business_id || "",
       });
     }
   }, [departmentData]);
@@ -36,14 +36,12 @@ const DepartmentModel = ({ onClose, departmentData, fetchData }) => {
       : `${API_URL}/department`;
     const method = departmentData?._id ? "put" : "post";
     try {
-      // alert("submit form")
       const response = await axios({
         method,
         url,
         data: formData,
         withCredentials: true,
       });
-      // console.log(response);
 
       if (response.status === 200 || response.status === 201) {
         onClose();

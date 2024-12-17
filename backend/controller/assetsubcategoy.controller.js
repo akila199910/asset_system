@@ -1,4 +1,5 @@
 import assetSubCategoryModel from "../models/assetsubcategories.model.js";
+import { assetSubCategoryUpdateValidate } from "../validators/assetSubCatogory/assetSubCategory.update.validate.js";
 
 class AssetSubCategoryController {
   async getAssetSubCategory(req, res) {
@@ -6,9 +7,10 @@ class AssetSubCategoryController {
     try {
       const assetSubCategory = await assetSubCategoryModel.find({
         business_id: business_id,
-        status: true,
       });
-      res.status(200).json({ assetSubCategory: assetSubCategory, status: true });
+      res
+        .status(200)
+        .json({ assetSubCategory: assetSubCategory, status: true });
     } catch (error) {
       res.status(500).json({
         message: "An error occurred while fetching asset sub category",
@@ -24,12 +26,12 @@ class AssetSubCategoryController {
     const new_assetSubCategory = { name, status, business_id };
 
     try {
-      // const isValid = await assetCategoryCreateValidation(
-      //   res,
-      //   new_assetCategory
-      // );
+      const isValid = await assetSubCategoryCreateValidation(
+        res,
+        new_assetCategory
+      );
 
-      // if (!isValid) return;
+      if (!isValid) return;
       const assetSubCategory = await assetSubCategoryModel.create(
         new_assetSubCategory
       );
@@ -45,39 +47,46 @@ class AssetSubCategoryController {
   }
   async getAssetSubCategoryById(req, res) {
     try {
-      const assetSubCategory = await assetSubCategoryModel.findById(req.params.id);
+      const assetSubCategory = await assetSubCategoryModel.findById(
+        req.params.id
+      );
       if (!assetSubCategory) {
         return res
           .status(404)
           .json({ error: "Asset Sub Category not found", status: false });
       }
 
-      res.status(200).json({ assetSubCategory: assetSubCategory, status: true });
+      res
+        .status(200)
+        .json({ assetSubCategory: assetSubCategory, status: true });
     } catch (error) {
       res.status(400).json({ error: error.message, status: false });
     }
   }
   async updateAssetSubCategory(req, res) {
     const update_assetSubCategory = req.body;
+    const business_id = req.session.business_id;
+    update_assetSubCategory.business_id = business_id;
 
     try {
-      await assetCategoryUpdateValidate(update_assetSubCategory);
-      const update_assetSubCategory = await assetSubCategoryModel.findByIdAndUpdate(
-        update_assetSubCategory._id,
-        {
-          name: update_assetSubCategory.name,
-          status: update_assetSubCategory.status,
-          business_id: update_assetSubCategory.business_id,
-        },
-        { new: true }
-      );
+      await assetSubCategoryUpdateValidate(update_assetSubCategory);
+      const updated_assetSubCategory =
+        await assetSubCategoryModel.findByIdAndUpdate(
+          update_assetSubCategory._id,
+          {
+            name: update_assetSubCategory.name,
+            status: update_assetSubCategory.status,
+            business_id: update_assetSubCategory.business_id,
+          },
+          { new: true }
+        );
       if (!update_assetSubCategory) {
         return res
           .status(404)
           .json({ error: "Asset Sub Category not found", status: false });
       }
       res.status(200).json({
-        assetSubCategory: update_assetSubCategory,
+        updated_assetSubCategory: updated_assetSubCategory,
         status: true,
         message: "Asset sub category updated successfully",
       });

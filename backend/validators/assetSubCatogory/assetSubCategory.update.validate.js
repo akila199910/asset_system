@@ -1,15 +1,15 @@
-import departmentModel from "../../models/department.model.js";
+import assetsubcategoriesModel from "../../models/assetsubcategories.model.js";
 
-export const departmentUpdateValidate = async (update_department) => {
+export const assetSubCategoryUpdateValidate = async (update_assetSubCategory) => {
+  const errors = {};
   const validation = {
-    name: { required: true, min: 3, max: 30, message: "Department name" },
+    name: { required: true, min: 3, max: 30, message: "Asset sub category name" },
     status: { required: false, message: "Status" },
     business_id: { required: true, message: "Business ID" },
   };
-  const errors = {};
 
   for (const [field, rules] of Object.entries(validation)) {
-    const value = update_department[field];
+    const value = update_assetSubCategory[field];
 
     if (rules.required && !value) {
       errors[field] = `${rules.message} is required`;
@@ -28,15 +28,15 @@ export const departmentUpdateValidate = async (update_department) => {
     }
   }
 
-  if (update_department.name) {
-    const isNameExist = await departmentModel.findOne({
-      name: update_department.name,
-      business_id: update_department.business_id,
-      _id: { $ne: update_department._id },
+  if (update_assetSubCategory.name) {
+    const isNameExist = await assetsubcategoriesModel.findOne({
+      name: update_assetSubCategory.name,
+      business_id: update_assetSubCategory.business_id,
+      _id: { $ne: update_assetSubCategory._id },
     });
 
     if (isNameExist) {
-      errors.name = `An asset category with the name '${update_department.name}' already exists for this business.`;
+      errors.name = `An asset category with the name '${update_assetSubCategory.name}' already exists for this business.`;
     }
   }
 

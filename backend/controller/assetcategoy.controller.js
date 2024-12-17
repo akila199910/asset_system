@@ -7,7 +7,6 @@ class AssetCategoryController {
     try {
       const assetCategory = await assetCategoryModel.find({
         business_id: business_id,
-        status: true,
       });
       res.status(200).json({ assetCategory: assetCategory, status: true });
     } catch (error) {
@@ -58,6 +57,8 @@ class AssetCategoryController {
   }
   async updateAssetCategory(req, res) {
     const update_assetCategory = req.body;
+    const business_id = req.session.business_id;
+    update_assetCategory.business_id = business_id;
 
     try {
       await assetCategoryUpdateValidate(update_assetCategory);

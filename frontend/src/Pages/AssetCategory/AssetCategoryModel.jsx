@@ -60,11 +60,11 @@ const AssetCategoryModel = ({ onClose, assetCategoryData, fetchData }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
       <div className="w-full max-w-lg p-6 bg-white rounded-t-lg mx-4 sm:mx-auto max-h-[80vh] overflow-y-auto">
         <h2 className="mb-4 text-xl font-bold text-center">
-          {assetCategoryData ? "Edit" : "Add"} User
+          {assetCategoryData._id ? "Edit" : "Add"} Asset Category
         </h2>
         <form onSubmit={handleSubmit}>
           {/* Owner Details Section */}
-          <h3 className="mt-6 mb-2 text-lg font-semibold">User Details</h3>
+          <h3 className="mt-6 mb-2 text-lg font-semibold">Asset Category Details</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <input
               type="hidden"
@@ -79,7 +79,7 @@ const AssetCategoryModel = ({ onClose, assetCategoryData, fetchData }) => {
               <input
                 type="text"
                 name="name"
-                value={formData.firstName}
+                value={formData.name}
                 onChange={handleChange}
                 required
                 className="w-full p-2 border rounded"

@@ -118,12 +118,12 @@ const AssetCategory = () => {
       <div className="relative bg-white rounded-md shadow-md">
         {/* Header section with fixed background */}
         <div className="sticky top-0 z-10 flex items-center justify-between bg-white">
-          <h2 className="p-4 text-lg font-bold text-gray-800">Departments</h2>
+          <h2 className="p-4 text-lg font-bold text-gray-800">Asset Category</h2>
           <button
             className="px-4 py-2 mr-4 text-white bg-blue-500 rounded"
             onClick={addDepartment}
           >
-            Add department
+            Add Asset Category
           </button>
         </div>
 

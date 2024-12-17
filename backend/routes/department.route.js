@@ -17,10 +17,10 @@ class DepartmentRoute {
       departmentController.createDepartment(req, res)
     );
     this.router.get("/:id", (req, res) =>
-      departmentController.getBusinessById(req, res)
+      departmentController.getDepartmentById(req, res)
     );
     this.router.put("/", (req, res) =>
-      departmentController.updateBusiness(req, res)
+      departmentController.updateDepartment(req, res)
     );
     // this.router.delete("/:id", (req, res) =>
     //   departmentController.deleteBusiness(req, res)

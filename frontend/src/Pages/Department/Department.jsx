@@ -97,6 +97,7 @@ const Department = () => {
         withCredentials: true,
       });
       const departmentData = response.data.department;
+      console.log(departmentData);
       setEditDepartment({
         _id: departmentData._id,
         name: departmentData.name,
