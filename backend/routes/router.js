@@ -8,6 +8,7 @@ import employeeRoutes from "./employee.route.js";
 import departmentRoutes from "./department.route.js";
 import assetSubCategoryRoutes from "./assetsSubCategory.route.js";
 import assetRoutes from "./assets.route.js";
+import assetHandlingRoutes from "./assetHandling.route.js";
 import { authenticateToken } from "../middleware/authenticateToken.js";
 
 class MainRouter {
@@ -22,6 +23,7 @@ class MainRouter {
     this.assetsCategoryMainRoutes();
     this.assetsSubCategoryMainRoutes();
     this.assetsMainRoutes();
+    this.assetHandlingMainRoutes();
   }
 
   dashboardMainRoutes() {
@@ -52,6 +54,9 @@ class MainRouter {
   }
   assetsMainRoutes() {
     this.router.use("/assets", assetRoutes);
+  }
+  assetHandlingMainRoutes() {
+    this.router.use("/asset_handling", assetHandlingRoutes);
   }
 }
 

@@ -8,6 +8,7 @@ import DepartmentRoutes from "./Routes/DepartmentRoutes/DepartmentRoutes";
 import AssetCategoryRoutes from "./Routes/AssetCategoryRoutes/AssetCategoryRoutes";
 import AssetSubCategoryRoutes from "./Routes/AssetSubCategoryRoutes/AssetSubCategoryRoutes";
 import AssetRoutes from "./Routes/AssetRoutes/AssetRoutes";
+import AssetHandlingRoutes from "./Routes/AssetHandlingRoutes/AssetHandlingRoutes";
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
             element={<AssetSubCategoryRoutes />}
           />
           <Route path="/assets" element={<AssetRoutes />} />
-
+          <Route path="/asset_handling" element={<AssetHandlingRoutes />} />
         </Routes>
       </BrowserRouter>
     </>

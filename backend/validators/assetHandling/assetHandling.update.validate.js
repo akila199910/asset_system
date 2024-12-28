@@ -1,9 +1,8 @@
 import assetModel from "../../models/asset.model.js";
 
-export const assetCreateValidation = async (res, new_asset) => {
+export const assetUpdateValidate = async (res, new_asset) => {
   const errors = {};
 
-  // Validation rules
   const validation = {
     name: { required: true, min: 3, max: 30, message: "Asset name" },
     status: { required: false, message: "Status" },
@@ -50,6 +49,7 @@ export const assetCreateValidation = async (res, new_asset) => {
       name: new_asset.name,
       business_id: new_asset.business_id,
       serial_no: new_asset.serial_no,
+      _id: { $ne: new_asset._id },
     });
 
     if (isNameExist) {
@@ -62,7 +62,7 @@ export const assetCreateValidation = async (res, new_asset) => {
   if (new_asset.serial_no) {
     const isSerialNoExist = await assetModel.findOne({
       serial_no: new_asset.serial_no,
-      business_id: new_asset.business_id,
+      _id: { $ne: new_asset._id },
     });
 
     if (isSerialNoExist) {

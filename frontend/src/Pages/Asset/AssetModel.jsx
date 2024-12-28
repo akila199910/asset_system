@@ -2,7 +2,13 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 const API_URL = process.env.REACT_APP_API_URL;
 
-const AssetModel = ({ onClose, assetData, fetchData, assetCategories,assetSubCategories }) => {
+const AssetModel = ({
+  onClose,
+  assetData,
+  fetchData,
+  assetCategories,
+  assetSubCategories,
+}) => {
   const [formData, setFormData] = useState({
     _id: "",
     name: "",
@@ -29,7 +35,7 @@ const AssetModel = ({ onClose, assetData, fetchData, assetCategories,assetSubCat
         asset_no: assetData.asset_no || "",
         serial_no: assetData.serial_no || "",
         purchased_date: assetData.purchased_date || "",
-        warranty: assetData.warranty || "Yes",
+        warranty: assetData.warranty || false,
         description: assetData.description || "",
       });
     }
@@ -73,7 +79,7 @@ const AssetModel = ({ onClose, assetData, fetchData, assetCategories,assetSubCat
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
       <div className="w-full max-w-lg p-6 bg-white rounded-t-lg mx-4 sm:mx-auto max-h-[80vh] overflow-y-auto">
         <h2 className="mb-4 text-xl font-bold text-center">
-          {assetData ? "Edit" : "Add"} User
+          {assetData._id ? "Edit" : "Add"} Asset
         </h2>
         <form onSubmit={handleSubmit}>
           <h3 className="mt-6 mb-2 text-lg font-semibold">Asset Details</h3>
@@ -189,7 +195,6 @@ const AssetModel = ({ onClose, assetData, fetchData, assetCategories,assetSubCat
                 name="purchased_date"
                 value={formData.purchased_date}
                 onChange={handleChange}
-                required
                 className="w-full p-2 border rounded"
               />
             </div>

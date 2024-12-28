@@ -62,6 +62,6 @@ const assetModel = new mongoose.Schema(
 );
 
 assetModel.index({ business_id: 1, name: 1,serial_no: 1 }, { unique: true });
-assetModel.index({ serial_no: 1 }, { unique: true });
+assetModel.index({ serial_no: 1,business_id: 1 }, { unique: true });
 
 export default mongoose.model("Assets", assetModel);

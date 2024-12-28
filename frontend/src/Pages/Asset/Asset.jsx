@@ -57,7 +57,7 @@ const Asset = () => {
     },
     {
       name: "Warranty",
-      selector: (row) => row.warranty,
+      selector: (row) => <div>{row.warranty ? "Yes" : "No"}</div>,
       sortable: false,
     },
     {

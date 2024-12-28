@@ -57,7 +57,7 @@ const navLinks = [
     id: 7,
     title: "Assets Handlings",
     icon: <FaExchangeAlt className="inline-block w-6 h-6 mr-2 -mt-2" />,
-    path: "/asset_handlings",
+    path: "/asset_handling",
   },
   {
     id: 8,
